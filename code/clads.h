@@ -26,21 +26,19 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
-#define CLADS_S_PRINTF      "%.1Lf"
-#define CLADS_PRINTF        "%.10Lf"
-#define CLADS_SIZE_PRINTF   "%llu"
-#define CLADS_SCANF         "%Lf"
-#define CLADS_POW           powl
-#define CLADS_SQRT          sqrtl
-#define CLADS_EXP           expl
-#define CLADS_LOG           logl
-#define CLADS_SIN           sinl
-#define CLADS_COS           cosl
-#define CLADS_ATAN2         atan2l
-#define CLADS_FABS          fabsl
+#define CLADS_REAL_STR  "%Lf"
+#define CLADS_UINT_STR  "%llu"
+#define CLADS_POW       powl
+#define CLADS_SQRT      sqrtl
+#define CLADS_EXP       expl
+#define CLADS_LOG       logl
+#define CLADS_SIN       sinl
+#define CLADS_COS       cosl
+#define CLADS_ATAN2     atan2l
+#define CLADS_FABS      fabsl
 
-#define CLADS_VERBOSE       1
-#define CLADS_DEBUG         1
+#define CLADS_VERBOSE   1
+#define CLADS_DEBUG     1
 
 #define CLADS_SWAP(a,b)     {(a) += (b); (b) = (a) - (b); (a) -= (b);}
 #define CLADS_SCALE(v,a,b)  (2 * (((v) - (b)) / ((a) - (b))) - 1)
@@ -55,6 +53,7 @@ typedef clads_uint_type clads_id_type;
 typedef clads_uint_type clads_size_type;
 typedef enum {false, true} clads_bool_type;
 typedef enum {off, on} clads_key_type;
+typedef enum {less, equal, more} clads_order_type;
 
 
 /**
@@ -93,13 +92,13 @@ clads_randint(const clads_int_type min,
 /**
  *
  */
-inline clads_real_type
+inline clads_uint_type
 clads_factorial(const clads_uint_type v);
 
 /**
  *
  */
-inline clads_real_type
+inline clads_uint_type
 clads_binomial(const clads_uint_type n,
                const clads_uint_type k);
 

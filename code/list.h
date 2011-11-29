@@ -24,12 +24,45 @@
 #include "clads.h"
 
 
+typedef struct clads_list_node
+{
+    struct clads_list_node *prev;
+    void *info;
+    struct clads_list_node *next;
+} clads_list_node_type;
+
 typedef struct clads_list
 {
-    void *info;
-    struct clads_list *next;
+    clads_list_node_type *head;
+    clads_list_node_type *tail;
+    clads_bool_type is_set;
+    /**
+     * This function tell if two nodes have the same information
+     * (i.e. are equal).
+     */
+    clads_order_type (*f_compare)(void *,
+                                  void *);
 } clads_list_type;
 
+
+/**
+ *
+ */
+clads_list_node_type *
+clads_list_node_new();
+
+/**
+ *
+ */
+void
+clads_list_node_initialize(clads_list_node_type *n,
+                           void *info);
+
+/**
+ *
+ */
+void
+clads_list_node_finalize(clads_list_node_type *n);
 
 /**
  *
@@ -53,12 +86,21 @@ clads_list_size(clads_list_type *l);
  *
  */
 clads_bool_type
-clads_list_insert(clads_list_type **l, void *i);
+clads_list_insert(clads_list_type *l,
+                  clads_list_node_type *x);
 
 /**
  *
  */
 clads_bool_type
-clads_list_remove(clads_list_type **l, void *i);
+clads_list_remove(clads_list_type *l,
+                  clads_list_node_type *x);
+
+/**
+ *
+ */
+clads_list_node_type *
+clads_list_search(clads_list_type *l,
+                  void *info);
 
 #endif

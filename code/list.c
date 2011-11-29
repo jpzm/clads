@@ -21,34 +21,77 @@
 #include "list.h"
 
 
+clads_order_type
+clads_list_default_f_compare(void *a,
+                             void *b)
+{
+    if (*((int *) a) == *((int *) b))
+        return equal;
+    if (*((int *) a) < *((int *) b))
+        return less;
+    return more;
+}
+
+clads_list_node_type *
+clads_list_node_new()
+{
+    clads_list_node_type *n;
+
+    n = malloc(sizeof(clads_list_node_type));
+    clads_list_node_initialize(n, NULL);
+
+    return n;
+}
+
+void
+clads_list_node_initialize(clads_list_node_type *n,
+                           void *info)
+{
+    n->prev = NULL;
+    n->info = info;
+    n->next = NULL;
+}
+
+void
+clads_list_node_finalize(clads_list_node_type *n)
+{
+    if (n->info != NULL)
+        free((void *) n->info);
+
+    free((void *) n);
+}
+
 void
 clads_list_initialize(clads_list_type *l)
 {
-    l->info = NULL;
-    l->next = NULL;
+    l->is_set = false;
+    l->head = NULL;
+    l->tail = NULL;
+    l->f_compare = &clads_list_default_f_compare;
 }
 
 void
 clads_list_finalize(clads_list_type *l)
 {
-    clads_list_type *m, *p = l;
+    clads_list_node_type *m, *p = l->head;
 
-    while (p)
+    while (p != NULL)
     {
         m = p->next;
-        free((void *) p->info);
-        free((void *) p);
+        clads_list_node_finalize(p);
         p = m;
     }
+
+    free((void *) l);
 }
 
 clads_size_type
 clads_list_size(clads_list_type *l)
 {
-    clads_list_type *p = l;
+    clads_list_node_type *p = l->head;
     clads_size_type s = 0;
 
-    while (p)
+    while (p != NULL)
     {
         s++;
         p = p->next;
@@ -58,47 +101,62 @@ clads_list_size(clads_list_type *l)
 }
 
 clads_bool_type
-clads_list_insert(clads_list_type **l, void *i)
+clads_list_insert(clads_list_type *l,
+                  clads_list_node_type *x)
 {
-    clads_list_type *m;
+    if (l->is_set == true)
+        if (clads_list_search(l, x->info) != NULL)
+            return false;
 
-    if (i)
+    if (l->head == NULL)
+        l->tail = x;
+    else
+        l->head->prev = x;
+
+    x->next = l->head;
+    l->head = x;
+
+    return true;
+}
+
+clads_bool_type
+clads_list_remove(clads_list_type *l,
+                  clads_list_node_type *x)
+{
+    if (x != NULL)
     {
-        if ((m = malloc(sizeof(clads_list_type))))
-        {
-            m->info = i;
-            m->next = *l;
-            *l = m;
+        if (x == l->tail)
+            l->tail = x->prev;
 
-            return true;
-        }
+        if (x->prev != NULL)
+            x->prev->next = x->next;
+        if (x->next != NULL)
+            x->next->prev = x->prev;
+
+        if (x == l->head)
+            l->head = x->next;
+
+        clads_list_node_finalize(x);
+
+        return true;
     }
 
     return false;
 }
 
-clads_bool_type
-clads_list_remove(clads_list_type **l, void *i)
+clads_list_node_type *
+clads_list_search(clads_list_type *l,
+                  void *info)
 {
-    clads_list_type *m = NULL, *p = *l;
+    clads_list_node_type *p = l->head;
 
-    while (p)
+    while (p != NULL)
     {
-        if (p->info == i)
-        {
-            if (m)
-                m->next = p->next;
-            else
-                *l = p->next;
+        if (l->f_compare(p->info, info) == equal)
+            return p;
 
-            free(p);
-
-            return true;
-        }
-
-        m = p;
         p = p->next;
     }
 
-    return false;
+    return NULL;
 }
