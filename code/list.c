@@ -25,6 +25,9 @@ clads_order_type
 clads_list_default_f_compare(void *a,
                              void *b)
 {
+    /*
+     * As default threat as integer values.
+     */
     if (*((int *) a) == *((int *) b))
         return equal;
     if (*((int *) a) < *((int *) b))
@@ -55,10 +58,21 @@ clads_list_node_initialize(clads_list_node_type *n,
 void
 clads_list_node_finalize(clads_list_node_type *n)
 {
-    if (n->info != NULL)
-        free((void *) n->info);
+    if (n != NULL)
+    {
+        if (n->info != NULL)
+            free((void *) n->info);
 
-    free((void *) n);
+        n->info = NULL;
+        n->prev = NULL;
+        n->next = NULL;
+
+        free((void *) n);
+    }
+#if CLADS_DEBUG
+    else
+        printf("W. [LIST] Trying to finalize a NULL pointer.\n");
+#endif
 }
 
 void
@@ -73,16 +87,28 @@ clads_list_initialize(clads_list_type *l)
 void
 clads_list_finalize(clads_list_type *l)
 {
-    clads_list_node_type *m, *p = l->head;
+    clads_list_node_type *m, *p;
 
-    while (p != NULL)
+    if (l != NULL)
     {
-        m = p->next;
-        clads_list_node_finalize(p);
-        p = m;
-    }
+        p = l->head;
 
-    free((void *) l);
+        while (p != NULL)
+        {
+            m = p->next;
+            clads_list_node_finalize(p);
+            p = m;
+        }
+
+        l->head = NULL;
+        l->tail = NULL;
+
+        free((void *) l);
+    }
+#if CLADS_DEBUG
+    else
+        printf("W. [LIST] Trying to finalize a NULL pointer.\n");
+#endif
 }
 
 clads_size_type

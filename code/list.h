@@ -40,8 +40,7 @@ typedef struct clads_list
      * This function tell if two nodes have the same information
      * (i.e. are equal).
      */
-    clads_order_type (*f_compare)(void *,
-                                  void *);
+    clads_order_type (*f_compare)(void *, void *);
 } clads_list_type;
 
 
