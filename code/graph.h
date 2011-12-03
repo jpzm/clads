@@ -28,58 +28,45 @@
 /**
  *
  */
-typedef struct graph_node
+typedef struct clads_graph_node
 {
     clads_id_type id;
     clads_real_type clustering;
     void *info; // used by external libraries and applications
-    clads_key_type status;
 } clads_graph_node_type;
 
 /**
  *
  */
-typedef struct graph_edge
+typedef struct clads_graph_edge
 {
-    clads_id_type id;
     clads_graph_node_type *na;
     clads_graph_node_type *nb;
     void *info; // used by external libraries and applications
-    clads_key_type status;
 } clads_graph_edge_type;
-
-/**
- *
- */
-typedef struct graph_adjacency
-{
-    clads_graph_node_type *n;
-    clads_graph_edge_type *e;
-} clads_graph_adjacency_type;
 
 /**
  * Graph structure
  */
-typedef struct graph
+typedef struct clads_graph
 {
     clads_uint_type n_node;
     clads_uint_type n_edge;
     clads_list_type *l_node;
     clads_list_type *l_edge;
-    clads_bool_type directed;
+    clads_bool_type is_directed;
     clads_real_type clustering;
 
     /**
      * The adjacency list is indexed by the node's id.
      */
-    clads_list_type **l_near;
+    clads_list_type **l_adjacency;
 
     /**
      * This function tell if two nodes have the same information
      * (i.e. are equal).
      */
-    clads_bool_type (*f_node_eq)(clads_graph_node_type *,
-                                 clads_graph_node_type *);
+    clads_order_type (*f_compare)(void *, void *);
 } clads_graph_type;
 
 
@@ -110,13 +97,13 @@ clads_graph_copy(const clads_graph_type *ga,
  *
  */
 void
-clads_graph_create_adjacency(clads_graph_type *g);
+clads_graph_mount_adjacency(clads_graph_type *g);
 
 /**
  *
  */
 void
-clads_graph_destroy_adjacency(clads_graph_type *g);
+clads_graph_clear_adjacency(clads_graph_type *g);
 
 /**
  *
@@ -138,13 +125,6 @@ clads_graph_add_node(clads_graph_type *g,
  *
  */
 clads_graph_edge_type *
-clads_graph_get_edge(clads_graph_type *g,
-                     clads_id_type id);
-
-/**
- *
- */
-clads_graph_edge_type *
 clads_graph_get_edge_by_nodes(clads_graph_type *g,
                               clads_graph_node_type *na,
                               clads_graph_node_type *nb);
@@ -159,12 +139,6 @@ clads_graph_get_edges_by_node(clads_graph_type *g,
 /**
  *
  */
-clads_list_type *
-clads_graph_get_edge_list(clads_graph_type *g);
-
-/**
- *
- */
 clads_graph_node_type *
 clads_graph_get_node(clads_graph_type *g,
                      clads_id_type id);
@@ -175,12 +149,6 @@ clads_graph_get_node(clads_graph_type *g,
 clads_graph_node_type *
 clads_graph_get_node_by_info(clads_graph_type *g,
                              void *info);
-
-/**
- *
- */
-clads_list_type *
-clads_graph_get_node_list(clads_graph_type *g);
 
 /**
  *
