@@ -21,11 +21,51 @@
 #include "tree.h"
 
 
-clads_bool_type
-clads_tree_default_f_node_eq(clads_tree_node_type *a,
-                             clads_tree_node_type *b)
+clads_order_type
+clads_tree_default_f_compare(void *a,
+                             void *b)
 {
-    return a == b;
+    /*
+     * As default threat as integer values.
+     */
+    if (*((int *) a) == *((int *) b))
+        return equal;
+    if (*((int *) a) < *((int *) b))
+        return less;
+    return more;
+}
+
+void
+clads_tree_node_initialize(clads_tree_node_type *n)
+{
+    n->parent = NULL;
+    n->info = NULL;
+    n->l_child = malloc(sizeof(clads_list_type));
+    clads_list_initialize(n->l_child);
+}
+
+void
+clads_tree_node_finalize(clads_tree_node_type *n)
+{
+    /*
+     * Finalize the children first.
+     */
+    clads_list_node_type *e = n->l_child->head;
+
+    while (e != NULL)
+    {
+        clads_tree_node_finalize((clads_tree_node_type *) e->info);
+
+        e = e->next;
+    }
+
+    clads_list_finalize(n->l_child);
+
+    if (n->info != NULL)
+        free((void *) n->info);
+    n->info = NULL;
+
+    free((void *) n);
 }
 
 void
@@ -33,7 +73,7 @@ clads_tree_initialize(clads_tree_type *t)
 {
     t->root = NULL;
     t->n_node = 0;
-    t->f_node_eq = &clads_tree_default_f_node_eq;
+    t->f_compare = &clads_tree_default_f_compare;
 }
 
 void
@@ -51,56 +91,38 @@ clads_tree_copy(const clads_tree_type *ta,
     return 0;
 }
 
-void
-clads_tree_node_initialize(clads_tree_node_type *n)
-{
-    n->id = -1;
-    n->parent = NULL;
-    n->l_child = NULL;
-    n->info = NULL;
-    n->attr = NULL;
-    n->status = off;
-}
-
-void
-clads_tree_node_finalize(clads_tree_node_type *n)
-{
-    clads_list_type *l = n->l_child;
-    clads_tree_node_type *c;
-
-    while (l)
-    {
-        c = (clads_tree_node_type *) n->info;
-        clads_tree_node_finalize(c);
-
-        l = l->next;
-    }
-
-    free((void *) n);
-}
-
 clads_tree_node_type *
-clads_tree_add_node(clads_tree_type *t,
-                    clads_tree_node_type *p,
-                    void *info)
+clads_tree_insert(clads_tree_type *t,
+                  clads_tree_node_type *p,
+                  clads_tree_node_type *n)
 {
-    clads_tree_node_type *n;
+    clads_list_node_type *e;
 
-    if (p == NULL || clads_tree_search_node(t, p->info))
+    /*
+     * Check if the parent exists or is NULL.
+     */
+    if (p == NULL && t->root == NULL)
     {
-        n = malloc(sizeof(struct tree_node));
-
-        clads_tree_node_initialize(n);
-        n->parent = p;
-        n->info = info;
-        n->status = on;
-
+        t->root = n;
         t->n_node++;
 
-        if (p == NULL)
+        return n;
+    }
+
+    if (p != NULL && clads_tree_search_node(t, p->info))
+    {
+        n->parent = p;
+
+        if (p != NULL)
+        {
+            e = clads_list_node_new();
+            e->info = (void *) n;
+            clads_list_insert(p->l_child, e);
+        }
+        else
             t->root = n;
-        else 
-            clads_list_insert(&p->l_child, n);
+
+        t->n_node++;
 
         return n;
     }
@@ -114,21 +136,21 @@ clads_tree_search_node_from(clads_tree_type *t,
                             void *info)
 {
     clads_tree_node_type *n, *a;
-    clads_list_type *l;
+    clads_list_node_type *l;
 
-    /**
+    /*
      * Checking for current node
      */
-    if (t->f_node_eq(r->info, info))
+    if (t->f_compare(r->info, info) == equal)
         return r;
 
-    /**
-     * Recurssion/iteration over children
+    /*
+     * Recurssion over children
      */
-    l = r->l_child;
+    l = r->l_child->head;
     a = NULL;
 
-    while (l && !a)
+    while (l != NULL && a == NULL)
     {
         n = (clads_tree_node_type *) l->info;
         a = clads_tree_search_node_from(t, n, info);

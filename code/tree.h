@@ -28,20 +28,17 @@
 /**
  *
  */
-typedef struct tree_node
+typedef struct clads_tree_node
 {
-    clads_id_type id;
-    struct tree_node *parent;
+    struct clads_tree_node *parent;
     clads_list_type *l_child;
-    void *info; // used by external libraries and applications
-    void *attr; // used by external libraries and applications
-    clads_key_type status;
+    void *info;
 } clads_tree_node_type;
 
 /**
  * Tree structure
  */
-typedef struct tree
+typedef struct clads_tree
 {
     clads_tree_node_type *root;
     clads_size_type n_node;
@@ -50,10 +47,21 @@ typedef struct tree
      * This function tell if two nodes have the same information
      * (i.e. are equal).
      */
-    clads_bool_type (*f_node_eq)(clads_tree_node_type *,
-                                 clads_tree_node_type *);
+    clads_order_type (*f_compare)(void *, void *);
 } clads_tree_type;
 
+
+/**
+ * Initialize a given tree node
+ */
+inline void
+clads_tree_initialize(clads_tree_type *t);
+
+/**
+ * Finalize a given tree node
+ */
+inline void
+clads_tree_finalize(clads_tree_type *t);
 
 /**
  * Initialize a given tree
@@ -90,9 +98,9 @@ clads_tree_node_finalize(clads_tree_node_type *n);
  *
  */
 clads_tree_node_type *
-clads_tree_add_node(clads_tree_type *t,
-                    clads_tree_node_type *p,
-                    void *info);
+clads_tree_insert(clads_tree_type *t,
+                  clads_tree_node_type *p,
+                  clads_tree_node_type *n);
 
 /**
  *
