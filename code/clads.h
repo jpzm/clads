@@ -43,6 +43,9 @@
 #define CLADS_SWAP(a,b)     {(a) += (b); (b) = (a) - (b); (a) -= (b);}
 #define CLADS_SCALE(v,a,b)  (2 * (((v) - (b)) / ((a) - (b))) - 1)
 
+#define CLADS_CAST(i, type)    ((type) (i))
+
+
 typedef unsigned char clads_byte_type;
 typedef unsigned char clads_u8_type;
 typedef unsigned short int clads_u16_type;

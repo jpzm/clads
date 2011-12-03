@@ -23,11 +23,6 @@
 
 #define SIZE    10
 
-int *
-f_cast(void *i)
-{
-    return (int *) i;
-}
 
 int main(void)
 {
@@ -45,7 +40,7 @@ int main(void)
 
         n = clads_list_node_new();
         n->info = malloc(sizeof(int));
-        *f_cast(n->info) = count;
+        *CLADS_CAST(n->info, int *) = count;
 
         clads_list_insert(&l, n);
     }
@@ -55,7 +50,7 @@ int main(void)
     n = l.head;
     while (n != NULL)
     {
-        printf("%d ", *f_cast(n->info));
+        printf("%d ", *CLADS_CAST(n->info, int *));
 
         n = n->next;
     }
