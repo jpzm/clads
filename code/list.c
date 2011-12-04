@@ -28,11 +28,11 @@ clads_list_default_f_compare(void *a,
     /*
      * As default threat as integer values.
      */
-    if (*((int *) a) == *((int *) b))
-        return equal;
-    if (*((int *) a) < *((int *) b))
+    if (*CLADS_CAST(a, int *) > *CLADS_CAST(b, int *))
+        return more;
+    if (*CLADS_CAST(a, int *) < *CLADS_CAST(b, int *))
         return less;
-    return more;
+    return equal;
 }
 
 clads_list_node_type *
@@ -66,8 +66,6 @@ clads_list_node_finalize(clads_list_node_type *n)
         n->info = NULL;
         n->prev = NULL;
         n->next = NULL;
-
-        free((void *) n);
     }
 #if CLADS_DEBUG
     else
@@ -102,8 +100,6 @@ clads_list_finalize(clads_list_type *l)
 
         l->head = NULL;
         l->tail = NULL;
-
-        free((void *) l);
     }
 #if CLADS_DEBUG
     else

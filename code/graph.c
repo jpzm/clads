@@ -1,6 +1,5 @@
 /**
- * Copyright (C) 2010 Joao Paulo de Souza Medeiros
- * Copyright (C) 2011 Joao Paulo de Souza Medeiros
+ * Copyright (C) 2010-2011 Joao Paulo de Souza Medeiros
  *
  * Author(s): João Paulo de Souza Medeiros <ignotus21@gmail.com>
  *
@@ -54,10 +53,16 @@ clads_graph_initialize(clads_graph_type *g)
 void
 clads_graph_finalize(clads_graph_type *g)
 {
-    clads_list_finalize(g->l_edge);
-    clads_list_finalize(g->l_node);
-    clads_graph_clear_adjacency(g);
-    free((void *) g);
+    if (g != NULL)
+    {
+        clads_list_finalize(g->l_edge);
+        clads_list_finalize(g->l_node);
+        clads_graph_clear_adjacency(g);
+    }
+#if CLADS_DEBUG
+    else
+        printf("W. [GRAPH] Trying to finalize a NULL pointer.\n");
+#endif
 }
 
 int
@@ -79,6 +84,7 @@ clads_graph_clear_adjacency(clads_graph_type *g)
             clads_list_finalize(g->l_adjacency[i]);
 
         free(g->l_adjacency);
+        g->l_adjacency = NULL;
     }
 }
 

@@ -47,25 +47,30 @@ clads_tree_node_initialize(clads_tree_node_type *n)
 void
 clads_tree_node_finalize(clads_tree_node_type *n)
 {
-    /*
-     * Finalize the children first.
-     */
-    clads_list_node_type *e = n->l_child->head;
-
-    while (e != NULL)
+    if (n != NULL)
     {
-        clads_tree_node_finalize((clads_tree_node_type *) e->info);
+        /*
+         * Finalize the children first.
+         */
+        clads_list_node_type *e = n->l_child->head;
 
-        e = e->next;
+        while (e != NULL)
+        {
+            clads_tree_node_finalize((clads_tree_node_type *) e->info);
+
+            e = e->next;
+        }
+
+        clads_list_finalize(n->l_child);
+
+        if (n->info != NULL)
+            free((void *) n->info);
+        n->info = NULL;
     }
-
-    clads_list_finalize(n->l_child);
-
-    if (n->info != NULL)
-        free((void *) n->info);
-    n->info = NULL;
-
-    free((void *) n);
+#if CLADS_DEBUG
+    else
+        printf("W. [TREE] Trying to finalize a NULL pointer.\n");
+#endif
 }
 
 void
@@ -79,8 +84,12 @@ clads_tree_initialize(clads_tree_type *t)
 void
 clads_tree_finalize(clads_tree_type *t)
 {
-    clads_tree_node_finalize(t->root);
-    free((void *) t);
+    if (t != NULL)
+        clads_tree_node_finalize(t->root);
+#if CLADS_DEBUG
+    else
+        printf("W. [TREE] Trying to finalize a NULL pointer.\n");
+#endif
 }
 
 int
