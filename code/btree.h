@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef CLADS_BINTREE_H
-#define CLADS_BINTREE_H
+#ifndef CLADS_BTREE_H
+#define CLADS_BTREE_H
 
 #include "clads.h"
 
@@ -27,86 +27,92 @@
 /**
  *
  */
-typedef struct bintree_node
+typedef struct clads_btree_node
 {
-    clads_id_type id;
-    struct bintree_node *parent;
-    struct bintree_node *left;
-    struct bintree_node *right;
-    void *info; // used by external libraries and applications
-    clads_key_type status;
-} clads_bintree_node_type;
+    struct clads_btree_node *parent;
+    void *info;
+    struct clads_btree_node *lchild;
+    struct clads_btree_node *rchild;
+} clads_btree_node_type;
 
 /**
  * Tree structure
  */
-typedef struct bintree
+typedef struct clads_btree
 {
-    clads_bintree_node_type *root;
+    clads_btree_node_type *root;
     clads_size_type n_node;
-    clads_size_type height;
-
-    /**
+    /*
      * This function tell if two nodes have the same information
      * (i.e. are equal).
      */
-    clads_bool_type (*f_node_eq)(clads_bintree_node_type *,
-                                 clads_bintree_node_type *);
-} clads_bintree_type;
+    clads_order_type (*f_compare)(void *, void *);
+} clads_btree_type;
 
-
-/**
- * Initialize a given tree
- */
-inline void
-clads_bintree_initialize(clads_bintree_type *t);
-
-/**
- * Finalize a given tree
- */
-inline void
-clads_bintree_finalize(clads_bintree_type *t);
-
-/**
- * Creates a copy of a tree.
- */
-int
-clads_bintree_copy(const clads_bintree_type *ta,
-                   clads_bintree_type *tb);
 
 /**
  * Initialize a given tree node
  */
 inline void
-clads_bintree_node_initialize(clads_bintree_node_type *n);
+clads_btree_initialize(clads_btree_type *t);
 
 /**
  * Finalize a given tree node
  */
 inline void
-clads_bintree_node_finalize(clads_bintree_node_type *n);
+clads_btree_finalize(clads_btree_type *t);
+
+/**
+ * Initialize a given tree
+ */
+inline void
+clads_btree_initialize(clads_btree_type *t);
+
+/**
+ * Finalize a given tree
+ */
+inline void
+clads_btree_finalize(clads_btree_type *t);
+
+/**
+ * Creates a copy of a tree.
+ */
+int
+clads_btree_copy(const clads_btree_type *ta,
+                 clads_btree_type *tb);
+
+/**
+ * Initialize a given tree node
+ */
+inline void
+clads_btree_node_initialize(clads_btree_node_type *n);
+
+/**
+ * Finalize a given tree node
+ */
+inline void
+clads_btree_node_finalize(clads_btree_node_type *n);
 
 /**
  *
  */
-clads_bintree_node_type *
-clads_bintree_add_node(clads_bintree_type *t,
-                       clads_bintree_node_type *n);
+clads_btree_node_type *
+clads_btree_insert(clads_btree_type *t,
+                   clads_btree_node_type *n);
 
 /**
  *
  */
-clads_bintree_node_type *
-clads_bintree_search_node_from(clads_bintree_type *t,
-                               clads_bintree_node_type *r,
-                               clads_bintree_node_type *n);
+clads_btree_node_type *
+clads_btree_remove(clads_btree_type *t,
+                   clads_btree_node_type *n);
 
 /**
  *
  */
-clads_bintree_node_type *
-clads_bintree_search_node(clads_bintree_type *t,
-                          clads_bintree_node_type *n);
+clads_btree_node_type *
+clads_btree_search(clads_btree_type *t,
+                   void *info);
 
 
 #endif
