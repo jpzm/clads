@@ -22,7 +22,7 @@
 #define CLADS_GRAPH_H
 
 #include "clads.h"
-#include "tree.h"
+#include "list.h"
 
 
 /**
@@ -173,7 +173,7 @@ clads_graph_node_clustering(clads_graph_type *g,
 /**
  *
  */
-clads_tree_type *
+clads_list_type *
 clads_graph_spanning_tree(clads_graph_type *g,
                           clads_graph_node_type *n);
 
