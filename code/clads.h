@@ -40,10 +40,10 @@
 #define CLADS_VERBOSE   1
 #define CLADS_DEBUG     1
 
-#define CLADS_SWAP(a,b)     {(a) += (b); (b) = (a) - (b); (a) -= (b);}
-#define CLADS_SCALE(v,a,b)  (2 * (((v) - (b)) / ((a) - (b))) - 1)
-
-#define CLADS_CAST(i, type)    ((type) (i))
+#define CLADS_SWAP(a,b)         {(a) += (b); (b) = (a) - (b); (a) -= (b);}
+#define CLADS_SCALE(v,a,b)      (2 * (((v) - (b)) / ((a) - (b))) - 1)
+#define CLADS_ALLOC(s,type)     ((type *) malloc(sizeof(type) * s))
+#define CLADS_CAST(i,type)      ((type) (i))
 
 
 typedef unsigned char clads_byte_type;
