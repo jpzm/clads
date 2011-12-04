@@ -1,8 +1,11 @@
+CC = cc
+CFLAGS = -ggdb -Wall
+
 default: all
 
 all:
-	cd code; cc -ggdb -Wall -shared -fPIC -c *.c
-	cd test; cc -Wall list.c -o list -lm \
+	cd code; ${CC} ${CFLAGS} -shared -fPIC -c *.c
+	cd test; ${CC} ${CFLAGS} list.c -o list -lm \
 		../code/clads.o \
 		../code/list.o
 
