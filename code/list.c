@@ -40,7 +40,7 @@ clads_list_node_new()
 {
     clads_list_node_type *n;
 
-    n = malloc(sizeof(clads_list_node_type));
+    n = CLADS_ALLOC(1, clads_list_node_type);
     clads_list_node_initialize(n, NULL);
 
     return n;

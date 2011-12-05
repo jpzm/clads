@@ -56,13 +56,11 @@ typedef struct clads_graph
     clads_list_type *l_edge;
     clads_bool_type is_directed;
     clads_real_type clustering;
-
-    /**
+    /*
      * The adjacency list is indexed by the node's id.
      */
     clads_list_type **l_adjacency;
-
-    /**
+    /*
      * This function tell if two nodes have the same information
      * (i.e. are equal).
      */
@@ -89,7 +87,7 @@ clads_graph_finalize(clads_graph_type *g);
  * @param gb    Pointer to a uninitialized graph structure.
  * @return      Return 0 (zero) for error and 1 (one) for success.
  */
-int
+clads_bool_type
 clads_graph_copy(const clads_graph_type *ga,
                  clads_graph_type *gb);
 

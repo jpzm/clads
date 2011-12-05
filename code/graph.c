@@ -65,11 +65,12 @@ clads_graph_finalize(clads_graph_type *g)
 #endif
 }
 
-int
+clads_bool_type
 clads_graph_copy(const clads_graph_type *ga,
                  clads_graph_type *gb)
 {
     // TODO: what? everything!
+
     return 0;
 }
 
@@ -100,14 +101,14 @@ clads_graph_mount_adjacency(clads_graph_type *g)
      */
     clads_graph_clear_adjacency(g);
 
-    g->l_adjacency = malloc(g->n_node * sizeof(clads_list_type *));
+    g->l_adjacency = CLADS_ALLOC(g->n_node, clads_list_type *);
 
     /*
      * Initializing lists
      */
     for (i = 0; i < g->n_node; i++)
     {
-        g->l_adjacency[i] = malloc(sizeof(clads_list_type));
+        g->l_adjacency[i] = CLADS_ALLOC(1, clads_list_type);
     }
 
     /*
@@ -202,7 +203,7 @@ clads_graph_add_edge(clads_graph_type *g,
                      clads_graph_node_type *nb,
                      void *info)
 {
-    clads_graph_edge_type *e = malloc(sizeof(clads_graph_edge_type));
+    clads_graph_edge_type *e = CLADS_ALLOC(1, clads_graph_edge_type);
     clads_list_node_type *p;
 
     g->n_edge++;
@@ -222,7 +223,7 @@ clads_graph_node_type *
 clads_graph_add_node(clads_graph_type *g,
                      void *info)
 {
-    clads_graph_node_type *n = malloc(sizeof(clads_graph_node_type));
+    clads_graph_node_type *n = CLADS_ALLOC(1, clads_graph_node_type);
     clads_list_node_type *p;
 
     n->id = g->n_node++;
@@ -265,7 +266,7 @@ clads_graph_get_node_neighbors(clads_graph_type *g,
                                clads_graph_node_type *n)
 {
     clads_list_node_type *p, *l = g->l_edge->head;
-    clads_list_type *r = (clads_list_type *) malloc(sizeof(clads_list_type));
+    clads_list_type *r = (clads_list_type *) CLADS_ALLOC(1, clads_list_type);
     clads_graph_edge_type *e;
 
     while (l != NULL)
