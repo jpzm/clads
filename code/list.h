@@ -36,7 +36,7 @@ typedef struct clads_list
     clads_list_node_type *head;
     clads_list_node_type *tail;
     clads_bool_type is_set;
-    /**
+    /*
      * This function tell if two nodes have the same information
      * (i.e. are equal).
      */
@@ -48,14 +48,13 @@ typedef struct clads_list
  *
  */
 clads_list_node_type *
-clads_list_node_new();
+clads_list_node_new(void);
 
 /**
  *
  */
 void
-clads_list_node_initialize(clads_list_node_type *n,
-                           void *info);
+clads_list_node_initialize(clads_list_node_type *n);
 
 /**
  *

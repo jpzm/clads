@@ -36,22 +36,21 @@ clads_list_default_f_compare(void *a,
 }
 
 clads_list_node_type *
-clads_list_node_new()
+clads_list_node_new(void)
 {
     clads_list_node_type *n;
 
     n = CLADS_ALLOC(1, clads_list_node_type);
-    clads_list_node_initialize(n, NULL);
+    clads_list_node_initialize(n);
 
     return n;
 }
 
 void
-clads_list_node_initialize(clads_list_node_type *n,
-                           void *info)
+clads_list_node_initialize(clads_list_node_type *n)
 {
     n->prev = NULL;
-    n->info = info;
+    n->info = NULL;
     n->next = NULL;
 }
 
