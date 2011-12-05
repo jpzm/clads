@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef CLADS_BTREE_H
-#define CLADS_BTREE_H
+#ifndef CLADS_TREE_H
+#define CLADS_TREE_H
 
 #include "clads.h"
 
@@ -27,21 +27,21 @@
 /**
  *
  */
-typedef struct clads_btree_node
+typedef struct clads_tree_node
 {
-    struct clads_btree_node *parent;
+    struct clads_tree_node *parent;
     void *info;
-    struct clads_btree_node *lchild;
-    struct clads_btree_node *rchild;
+    struct clads_tree_node *lchild;
+    struct clads_tree_node *rchild;
     clads_size_type height;
-} clads_btree_node_type;
+} clads_tree_node_type;
 
 /**
  * Tree structure
  */
-typedef struct clads_btree
+typedef struct clads_tree
 {
-    clads_btree_node_type *root;
+    clads_tree_node_type *root;
     clads_size_type n_node;
     clads_bool_type is_set;
     /*
@@ -49,98 +49,98 @@ typedef struct clads_btree
      * (i.e. are equal).
      */
     clads_order_type (*f_compare)(void *, void *);
-} clads_btree_type;
+} clads_tree_type;
 
 
 /**
  * Initialize a given tree node
  */
 inline void
-clads_btree_initialize(clads_btree_type *t);
+clads_tree_initialize(clads_tree_type *t);
 
 /**
  * Finalize a given tree node
  */
 inline void
-clads_btree_finalize(clads_btree_type *t);
+clads_tree_finalize(clads_tree_type *t);
 
 /**
  * Initialize a given tree
  */
 inline void
-clads_btree_initialize(clads_btree_type *t);
+clads_tree_initialize(clads_tree_type *t);
 
 /**
  * Finalize a given tree
  */
 inline void
-clads_btree_finalize(clads_btree_type *t);
+clads_tree_finalize(clads_tree_type *t);
 
 /**
  * Creates a copy of a tree.
  */
 int
-clads_btree_copy(const clads_btree_type *ta,
-                 clads_btree_type *tb);
+clads_tree_copy(const clads_tree_type *ta,
+                clads_tree_type *tb);
 
 /**
  * Initialize a given tree node
  */
 inline void
-clads_btree_node_initialize(clads_btree_node_type *n);
+clads_tree_node_initialize(clads_tree_node_type *n);
 
 /**
  * Finalize a given tree node
  */
 inline void
-clads_btree_node_finalize(clads_btree_node_type *n);
+clads_tree_node_finalize(clads_tree_node_type *n);
 
 /**
  *
  */
-clads_btree_node_type *
-clads_btree_insert(clads_btree_type *t,
-                   clads_btree_node_type *n);
+clads_tree_node_type *
+clads_tree_insert(clads_tree_type *t,
+                  clads_tree_node_type *n);
 
 /**
  *
  */
-clads_btree_node_type *
-clads_btree_remove(clads_btree_type *t,
-                   clads_btree_node_type *n);
+clads_tree_node_type *
+clads_tree_remove(clads_tree_type *t,
+                  clads_tree_node_type *n);
 
 /**
  *
  */
-clads_btree_node_type *
-clads_btree_search(clads_btree_type *t,
-                   void *info);
+clads_tree_node_type *
+clads_tree_search(clads_tree_type *t,
+                  void *info);
 
 /**
  *
  */
-clads_btree_node_type *
-clads_btree_minimun(clads_btree_type *t);
+clads_tree_node_type *
+clads_tree_minimun(clads_tree_type *t);
 
 /**
  *
  */
-clads_btree_node_type *
-clads_btree_minimun_from_node(clads_btree_type *t,
-                              clads_btree_node_type *n);
+clads_tree_node_type *
+clads_tree_minimun_from_node(clads_tree_type *t,
+                             clads_tree_node_type *n);
 
 /**
  *
  */
-clads_btree_node_type *
-clads_btree_maximun(clads_btree_type *t);
+clads_tree_node_type *
+clads_tree_maximun(clads_tree_type *t);
 
 /**
  *
  */
-clads_btree_node_type *
-clads_btree_maximun_from_node(clads_btree_type *t,
-                              clads_btree_node_type *n);
+clads_tree_node_type *
+clads_tree_maximun_from_node(clads_tree_type *t,
+                             clads_tree_node_type *n);
 
 
 #endif
