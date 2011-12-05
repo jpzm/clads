@@ -188,7 +188,7 @@ clads_graph_get_node_by_info(clads_graph_type *g,
     {
         n = (clads_graph_node_type *) l->info;
 
-        if (g->f_compare(n->info, info))
+        if (g->f_compare(n->info, info) == equal)
             return n;
 
         l = l->next;
