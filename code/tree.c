@@ -35,6 +35,17 @@ clads_tree_default_f_compare(void *a,
     return equal;
 }
 
+clads_tree_node_type *
+clads_tree_node_new(void)
+{
+    clads_tree_node_type *n;
+
+    n = CLADS_ALLOC(1, clads_tree_node_type);
+    clads_tree_node_initialize(n);
+
+    return n;
+}
+
 void
 clads_tree_node_initialize(clads_tree_node_type *n)
 {
@@ -52,8 +63,10 @@ clads_tree_node_finalize(clads_tree_node_type *n)
         /*
          * Finalize the children first.
          */
-        clads_tree_node_finalize(n->lchild);
-        clads_tree_node_finalize(n->rchild);
+        if (n->lchild != NULL)
+            clads_tree_node_finalize(n->lchild);
+        if (n->rchild != NULL)
+            clads_tree_node_finalize(n->rchild);
 
         if (n->info != NULL)
             free((void *) n->info);
@@ -82,7 +95,7 @@ clads_tree_finalize(clads_tree_type *t)
         clads_tree_node_finalize(t->root);
 #if CLADS_DEBUG
     else
-        printf("W. [TREE] Trying to finalize a NULL pointer.\n");
+        printf("W. [TREE] Trying to finalize a NULL tree.\n");
 #endif
 }
 
@@ -133,8 +146,7 @@ clads_tree_insert(clads_tree_type *t,
 
     t->n_node++;
     n->height = 0;
-
-    // TODO update height
+    // TODO update height;
 
     return n;
 }
@@ -161,38 +173,42 @@ clads_tree_remove(clads_tree_type *t,
 {
     clads_tree_node_type *p;
 
-    if (n->lchild == NULL)
+    if (n != NULL)
     {
-        p = n->rchild;
-        clads_tree_transplant(t, n, p);
-    }
-    else if (n->rchild == NULL)
-    {
-        p = n->lchild;
-        clads_tree_transplant(t, n, p);
-    }
-    else
-    {
-        p = clads_tree_minimun_from_node(t, n->rchild);
-
-        if (p->parent != n)
+        if (n->lchild == NULL)
         {
-            clads_tree_transplant(t, p, p->rchild);
-            p->rchild = n->rchild;
-            p->rchild->parent = p;
+            p = n->rchild;
+            clads_tree_transplant(t, n, p);
+        }
+        else if (n->rchild == NULL)
+        {
+            p = n->lchild;
+            clads_tree_transplant(t, n, p);
+        }
+        else
+        {
+            p = clads_tree_minimun_from_node(t, n->rchild);
+
+            if (p->parent != n)
+            {
+                clads_tree_transplant(t, p, p->rchild);
+                p->rchild = n->rchild;
+                p->rchild->parent = p;
+            }
+
+            clads_tree_transplant(t, n, p);
+            p->lchild = n->lchild;
+            p->lchild->parent = p;
         }
 
-        clads_tree_transplant(t, n, p);
-        p->lchild = n->lchild;
-        p->lchild->parent = p;
+        t->n_node--;
+        // TODO update height;
+        clads_tree_node_finalize(n);
+
+        return p;
     }
 
-    t->n_node--;
-    clads_tree_node_finalize(n);
-
-    // TODO update height
-
-    return p;
+    return NULL;
 }
 
 clads_tree_node_type *
@@ -236,7 +252,6 @@ clads_tree_minimun_from_node(clads_tree_type *t,
         m = m->lchild;
 
     return m;
-
 }
 
 clads_tree_node_type *
