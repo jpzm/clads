@@ -42,10 +42,15 @@ typedef struct clads_hash
     /*
      * This is the hash function
      */
-    clads_size_type (*f_hash)(clads_size_type,
-                              void *);
+    clads_size_type (*f_hash)(clads_size_type, clads_id_type);
 } clads_hash_type;
 
+
+/**
+ *
+ */
+clads_hash_node_type *
+clads_hash_node_new(void);
 
 /**
  *
@@ -90,7 +95,7 @@ clads_hash_remove(clads_hash_type *h,
  */
 clads_hash_node_type *
 clads_hash_search(clads_hash_type *h,
-                  clads_id_type id);
+                  clads_id_type key);
 
 /**
  *

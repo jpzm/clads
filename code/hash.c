@@ -22,12 +22,12 @@
 
 clads_size_type
 clads_hash_default_f_hash(clads_size_type m,
-                          void *key)
+                          clads_id_type key)
 {
     /*
      * As default threat as integer values.
      */
-    return (*CLADS_CAST(key, int *)) & (m - 1);
+    return key & (m - 1);
 }
 
 clads_order_type
@@ -47,9 +47,21 @@ clads_hash_default_f_compare(void *a,
     return equal;
 }
 
+clads_hash_node_type *
+clads_hash_node_new(void)
+{
+    clads_hash_node_type *n;
+
+    n = CLADS_ALLOC(1, clads_hash_node_type);
+    clads_hash_node_initialize(n);
+
+    return n;
+}
+
 void
 clads_hash_node_initialize(clads_hash_node_type *n)
 {
+    n->key = 0;
     n->info = NULL;
 }
 
@@ -73,7 +85,11 @@ clads_hash_initialize(clads_hash_type *h)
     h->is_set = false;
 
     for (i = 0; i < h->size; i++)
+    {
+        h->table[i] = CLADS_ALLOC(1, clads_list_type);
+        clads_list_initialize(h->table[i]);
         h->table[i]->f_compare = &clads_hash_default_f_compare;
+    }
 
     h->n_node = 0;
     h->f_hash = &clads_hash_default_f_hash;
@@ -82,12 +98,18 @@ clads_hash_initialize(clads_hash_type *h)
 void
 clads_hash_finalize(clads_hash_type *h)
 {
+    clads_size_type i;
+
     if (h != NULL)
     {
+        for (i = 0; i < h->size; i++)
+            free(h->table[i]);
+
+        free(h->table);
+
+        h->table = NULL;
         h->size = 0;
         h->n_node = 0;
-        free(h->table);
-        h->table = NULL;
     }
 #if CLADS_DEBUG
     else
@@ -95,8 +117,49 @@ clads_hash_finalize(clads_hash_type *h)
 #endif
 }
 
-clads_bool_type
-clads_hash_rehash(clads_hash_type *h);
+void
+clads_hash_rehash(clads_hash_type *h)
+{
+    clads_list_node_type *n, *m;
+    clads_list_type **table;
+    clads_hash_node_type *e;
+    clads_size_type i, j, size;
+
+    size = h->size * 2;
+    table = CLADS_ALLOC(size, clads_list_type *);
+
+    for (i = 0; i < size; i++)
+    {
+        table[i] = CLADS_ALLOC(1, clads_list_type);
+        clads_list_initialize(table[i]);
+        table[i]->f_compare = &clads_hash_default_f_compare;
+    }
+
+    for (i = 0; i < h->size; i++)
+    {
+        n = h->table[i]->head;
+
+        while (n != NULL)
+        {
+            m = n->next;
+
+            e = CLADS_CAST(n->info, clads_hash_node_type *);
+            j = h->f_hash(size, e->key);
+            n->prev = NULL;
+            n->next = NULL;
+            clads_list_insert(table[j], n);
+
+            n = m;
+        }
+
+        free(h->table[i]);
+    }
+
+    free(h->table);
+
+    h->size = size;
+    h->table = table;
+}
 
 clads_bool_type
 clads_hash_insert(clads_hash_type *h,
@@ -112,7 +175,7 @@ clads_hash_insert(clads_hash_type *h,
     if (h->size == h->n_node)
         clads_hash_rehash(h);
 
-    i = h->f_hash(h->size, &(n->key));
+    i = h->f_hash(h->size, n->key);
     e = clads_list_node_new();
     e->info = n;
     clads_list_insert(h->table[i], e);
@@ -125,15 +188,18 @@ clads_bool_type
 clads_hash_remove(clads_hash_type *h,
                   clads_hash_node_type *n)
 {
-    clads_size_type i = h->f_hash(h->size, &n->key);
-    clads_list_node_type *e = clads_list_search(h->table[i], &n->key);
-
-    if (e != NULL)
+    if (n != NULL)
     {
-        clads_list_remove(h->table[i], e);
-        h->n_node--;
+        clads_size_type i = h->f_hash(h->size, n->key);
+        clads_list_node_type *e = clads_list_search(h->table[i], &n->key);
 
-        return true;
+        if (e != NULL)
+        {
+            clads_list_remove(h->table[i], e);
+            h->n_node--;
+
+            return true;
+        }
     }
 
     return false;
@@ -146,7 +212,7 @@ clads_hash_search(clads_hash_type *h,
     clads_list_node_type *n;
     clads_size_type i;
 
-    i = h->f_hash(h->size, &key);
+    i = h->f_hash(h->size, key);
     n = clads_list_search(h->table[i], &key);
 
     if (n != NULL)
