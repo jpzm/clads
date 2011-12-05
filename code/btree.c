@@ -71,6 +71,7 @@ clads_btree_initialize(clads_btree_type *t)
 {
     t->root = NULL;
     t->n_node = 0;
+    t->is_set = false;
     t->f_compare = &clads_btree_default_f_compare;
 }
 
@@ -97,22 +98,161 @@ clads_btree_node_type *
 clads_btree_insert(clads_btree_type *t,
                    clads_btree_node_type *n)
 {
-    // TODO
-    return NULL;
+    clads_btree_node_type *p = t->root;
+    clads_btree_node_type *m = NULL;
+    clads_order_type o;
+
+    /*
+     * Find `n' position.
+     */
+    while (p != NULL)
+    {
+        o = t->f_compare(p->info, n->info);
+        m = p;
+
+        if (o == equal && t->is_set == true)
+            return NULL;
+
+        if (o == more)
+            p = p->lchild;
+        else
+            p = p->rchild;
+    }
+
+    /*
+     * Build references.
+     */
+    n->parent = m;
+
+    if (m == NULL)
+        t->root = n;
+    else if (o == more)
+        m->lchild = n;
+    else
+        m->rchild = n;
+
+    t->n_node++;
+    n->height = 0;
+
+    // TODO update height
+
+    return n;
+}
+
+void
+clads_btree_transplant(clads_btree_type *t,
+                       clads_btree_node_type *u,
+                       clads_btree_node_type *v)
+{
+    if (u->parent == NULL)
+        t->root = v;
+    else if (u == u->parent->lchild)
+        u->parent->lchild = v;
+    else
+        u->parent->rchild = v;
+
+    if (v != NULL)
+        v->parent = u->parent;
 }
 
 clads_btree_node_type *
 clads_btree_remove(clads_btree_type *t,
                    clads_btree_node_type *n)
 {
-    // TODO
-    return NULL;
+    clads_btree_node_type *p;
+
+    if (n->lchild == NULL)
+    {
+        p = n->rchild;
+        clads_btree_transplant(t, n, p);
+    }
+    else if (n->rchild == NULL)
+    {
+        p = n->lchild;
+        clads_btree_transplant(t, n, p);
+    }
+    else
+    {
+        p = clads_btree_minimun_from_node(t, n->rchild);
+
+        if (p->parent != n)
+        {
+            clads_btree_transplant(t, p, p->rchild);
+            p->rchild = n->rchild;
+            p->rchild->parent = p;
+        }
+
+        clads_btree_transplant(t, n, p);
+        p->lchild = n->lchild;
+        p->lchild->parent = p;
+    }
+
+    t->n_node--;
+    clads_btree_node_finalize(n);
+
+    // TODO update height
+
+    return p;
 }
 
 clads_btree_node_type *
 clads_btree_search(clads_btree_type *t,
                    void *info)
 {
-    // TODO
+    clads_btree_node_type *p;
+    clads_order_type o;
+
+    p = t->root;
+
+    while (p != NULL)
+    {
+        o = t->f_compare(p->info, info);
+
+        if (o == equal)
+            return p;
+
+        if (o == more)
+            p = p->lchild;
+        else
+            p = p->rchild;
+    }
+
     return NULL;
+}
+
+clads_btree_node_type *
+clads_btree_minimun(clads_btree_type *t)
+{
+    return clads_btree_minimun_from_node(t, t->root);
+}
+
+clads_btree_node_type *
+clads_btree_minimun_from_node(clads_btree_type *t,
+                              clads_btree_node_type *n)
+{
+    clads_btree_node_type *m = n;
+
+    while (m->lchild != NULL)
+        m = m->lchild;
+
+    return m;
+
+}
+
+clads_btree_node_type *
+clads_btree_maximun(clads_btree_type *t)
+{
+    return clads_btree_maximun_from_node(t, t->root);
+}
+
+clads_btree_node_type *
+clads_btree_maximun_from_node(clads_btree_type *t,
+                              clads_btree_node_type *n)
+{
+    clads_btree_node_type *m = n;
+
+    while (m->rchild != NULL)
+        m = m->rchild;
+
+    return m;
 }

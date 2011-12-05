@@ -33,6 +33,7 @@ typedef struct clads_btree_node
     void *info;
     struct clads_btree_node *lchild;
     struct clads_btree_node *rchild;
+    clads_size_type height;
 } clads_btree_node_type;
 
 /**
@@ -42,6 +43,7 @@ typedef struct clads_btree
 {
     clads_btree_node_type *root;
     clads_size_type n_node;
+    clads_bool_type is_set;
     /*
      * This function tell if two nodes have the same information
      * (i.e. are equal).
@@ -113,6 +115,32 @@ clads_btree_remove(clads_btree_type *t,
 clads_btree_node_type *
 clads_btree_search(clads_btree_type *t,
                    void *info);
+
+/**
+ *
+ */
+clads_btree_node_type *
+clads_btree_minimun(clads_btree_type *t);
+
+/**
+ *
+ */
+clads_btree_node_type *
+clads_btree_minimun_from_node(clads_btree_type *t,
+                              clads_btree_node_type *n);
+
+/**
+ *
+ */
+clads_btree_node_type *
+clads_btree_maximun(clads_btree_type *t);
+
+/**
+ *
+ */
+clads_btree_node_type *
+clads_btree_maximun_from_node(clads_btree_type *t,
+                              clads_btree_node_type *n);
 
 
 #endif
