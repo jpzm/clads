@@ -22,6 +22,7 @@
 #include "../code/hash.h"
 
 #define SIZE    8
+#define LIMIT   99
 
 
 void list_print(clads_list_type *l)
@@ -30,7 +31,7 @@ void list_print(clads_list_type *l)
 
     while (n != NULL)
     {
-        printf("%d ", *CLADS_CAST(n->info, int *));
+        printf("%2d ", *CLADS_CAST(n->info, int *));
         n = n->next;
     }
 
@@ -43,7 +44,7 @@ void hash_print(clads_hash_type *h)
 
     for (i = 0; i < h->size; i++)
     {
-        printf(" [%d] ", CLADS_CAST(i, int));
+        printf(" [%2d] ", CLADS_CAST(i, int));
         list_print(h->table[i]);
     }
 }
@@ -61,9 +62,9 @@ int main(void)
     for (i = 0; i < SIZE; i++)
     {
         n = clads_hash_node_new();
-        n->key = CLADS_CAST(clads_randint(0, 10 * SIZE), clads_id_type);
+        n->key = CLADS_CAST(clads_randint(0, LIMIT), clads_id_type);
 
-        printf("%d ", CLADS_CAST(n->key, int));
+        printf("%2d ", CLADS_CAST(n->key, int));
         clads_hash_insert(&h, n);
     }
     printf("\n");
@@ -71,8 +72,8 @@ int main(void)
     printf("OLD HASH: \n");
     hash_print(&h);
 
-    i = clads_randint(0, 10 * SIZE);
-    printf("REMOVING: %d\n", CLADS_CAST(i, int));
+    i = clads_randint(0, LIMIT);
+    printf("REMOVING: %2d\n", CLADS_CAST(i, int));
 
     n = clads_hash_search(&h, i);
     clads_hash_remove(&h, n);
