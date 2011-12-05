@@ -21,7 +21,7 @@
 #include "../code/clads.h"
 #include "../code/list.h"
 
-#define SIZE    10
+#define SIZE    9
 
 
 void list_print(clads_list_type *l)
@@ -46,14 +46,11 @@ int main(void)
     clads_initialize();
     clads_list_initialize(&l);
 
-    i = 0;
-    while (i < 10)
+    for (i = 0; i < SIZE; i++)
     {
-        i++;
-
         n = clads_list_node_new();
         n->info = CLADS_ALLOC(1, int);
-        *CLADS_CAST(n->info, int *) = clads_randint(0, 10);
+        *CLADS_CAST(n->info, int *) = clads_randint(0, SIZE);
 
         clads_list_insert(&l, n);
     }
@@ -61,7 +58,7 @@ int main(void)
     printf("OLD LIST: ");
     list_print(&l);
 
-    i = clads_randint(0, 10);
+    i = clads_randint(0, SIZE);
     printf("REMOVING: %d\n", CLADS_CAST(i, int));
 
     n = clads_list_search(&l, &i);
@@ -69,6 +66,8 @@ int main(void)
 
     printf("NEW LIST: ");
     list_print(&l);
+
+    clads_list_finalize(&l);
 
     return 0;
 }
