@@ -24,37 +24,51 @@
 #define SIZE    10
 
 
+void list_print(clads_list_type *l)
+{
+    clads_list_node_type *n = l->head;
+
+    while (n != NULL)
+    {
+        printf("%d ", *CLADS_CAST(n->info, int *));
+        n = n->next;
+    }
+
+    printf("\n");
+}
+
 int main(void)
 {
-    clads_size_type count;
     clads_list_node_type *n;
     clads_list_type l;
+    clads_size_type i;
 
     clads_initialize();
     clads_list_initialize(&l);
 
-    count = 0;
-    while (count < 10)
+    i = 0;
+    while (i < 10)
     {
-        count++;
+        i++;
 
         n = clads_list_node_new();
-        n->info = malloc(sizeof(int));
-        *CLADS_CAST(n->info, int *) = count;
+        n->info = CLADS_ALLOC(1, int);
+        *CLADS_CAST(n->info, int *) = clads_randint(0, 10);
 
         clads_list_insert(&l, n);
     }
 
-    clads_list_remove(&l, l.head->next);
+    printf("OLD LIST: ");
+    list_print(&l);
 
-    n = l.head;
-    while (n != NULL)
-    {
-        printf("%d ", *CLADS_CAST(n->info, int *));
+    i = clads_randint(0, 10);
+    printf("REMOVING: %d\n", CLADS_CAST(i, int));
 
-        n = n->next;
-    }
-    printf("\n");
+    n = clads_list_search(&l, &i);
+    clads_list_remove(&l, n);
+
+    printf("NEW LIST: ");
+    list_print(&l);
 
     return 0;
 }
