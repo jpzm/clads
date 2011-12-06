@@ -69,7 +69,7 @@ clads_tree_node_finalize(clads_tree_node_type *n)
             clads_tree_node_finalize(n->rchild);
 
         if (n->info != NULL)
-            free((clads_addr_type) n->info);
+            CLADS_FREE((clads_addr_type) n->info);
 
         n->info = NULL;
     }

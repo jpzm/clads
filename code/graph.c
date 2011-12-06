@@ -84,7 +84,7 @@ clads_graph_clear_adjacency(clads_graph_type *g)
         for (i = 0; i < g->n_node; i++)
             clads_list_finalize(g->l_adjacency[i]);
 
-        free(g->l_adjacency);
+        CLADS_FREE(g->l_adjacency);
         g->l_adjacency = NULL;
     }
 }

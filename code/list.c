@@ -60,7 +60,7 @@ clads_list_node_finalize(clads_list_node_type *n)
     if (n != NULL)
     {
         if (n->info != NULL)
-            free((clads_addr_type) n->info);
+            CLADS_FREE((clads_addr_type) n->info);
 
         n->info = NULL;
         n->prev = NULL;

@@ -70,7 +70,7 @@ clads_hash_node_finalize(clads_hash_node_type *n)
 {
     if (n != NULL)
     {
-        free(n->info);
+        CLADS_FREE(n->info);
         n->info = NULL;
     }
 }
@@ -103,9 +103,9 @@ clads_hash_finalize(clads_hash_type *h)
     if (h != NULL)
     {
         for (i = 0; i < h->size; i++)
-            free(h->table[i]);
+            CLADS_FREE(h->table[i]);
 
-        free(h->table);
+        CLADS_FREE(h->table);
 
         h->table = NULL;
         h->size = 0;
@@ -152,10 +152,10 @@ clads_hash_rehash(clads_hash_type *h)
             n = m;
         }
 
-        free(h->table[i]);
+        CLADS_FREE(h->table[i]);
     }
 
-    free(h->table);
+    CLADS_FREE(h->table);
 
     h->size = size;
     h->table = table;
