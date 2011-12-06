@@ -30,7 +30,7 @@
 typedef struct clads_tree_node
 {
     struct clads_tree_node *parent;
-    void *info;
+    clads_addr_type info;
     struct clads_tree_node *lchild;
     struct clads_tree_node *rchild;
     clads_size_type height;
@@ -48,7 +48,7 @@ typedef struct clads_tree
      * This function tell if two nodes have the same information
      * (i.e. are equal).
      */
-    clads_order_type (*f_compare)(void *, void *);
+    clads_order_type (*f_compare)(clads_addr_type, clads_addr_type);
 } clads_tree_type;
 
 
@@ -56,30 +56,30 @@ typedef struct clads_tree
  * Creating a new tree node
  */
 clads_tree_node_type *
-clads_tree_node_new(void);
+clads_tree_node_new(clads_void_type);
 
 /**
  * Initialize a given tree node
  */
-inline void
+inline clads_void_type
 clads_tree_node_initialize(clads_tree_node_type *t);
 
 /**
  * Finalize a given tree node
  */
-inline void
+inline clads_void_type
 clads_tree_node_finalize(clads_tree_node_type *t);
 
 /**
  * Initialize a given tree
  */
-inline void
+inline clads_void_type
 clads_tree_initialize(clads_tree_type *t);
 
 /**
  * Finalize a given tree
  */
-inline void
+inline clads_void_type
 clads_tree_finalize(clads_tree_type *t);
 
 /**
@@ -92,13 +92,13 @@ clads_tree_copy(const clads_tree_type *ta,
 /**
  * Initialize a given tree node
  */
-inline void
+inline clads_void_type
 clads_tree_node_initialize(clads_tree_node_type *n);
 
 /**
  * Finalize a given tree node
  */
-inline void
+inline clads_void_type
 clads_tree_node_finalize(clads_tree_node_type *n);
 
 /**
@@ -120,7 +120,7 @@ clads_tree_remove(clads_tree_type *t,
  */
 clads_tree_node_type *
 clads_tree_search(clads_tree_type *t,
-                  void *info);
+                  clads_addr_type info);
 
 /**
  *

@@ -42,10 +42,13 @@
 
 #define CLADS_SWAP(a,b)         {(a) += (b); (b) = (a) - (b); (a) -= (b);}
 #define CLADS_SCALE(v,a,b)      (2 * (((v) - (b)) / ((a) - (b))) - 1)
-#define CLADS_ALLOC(s,type)     ((type *) malloc(sizeof(type) * s))
 #define CLADS_CAST(i,type)      ((type) (i))
+#define CLADS_ALLOC(s,type)     ((type *) malloc(sizeof(type) * s))
+#define CLADS_FREE(i)           (free((clads_addr_type) i))
 
 
+typedef void clads_void_type;
+typedef void * clads_addr_type;
 typedef unsigned char clads_byte_type;
 typedef unsigned char clads_u8_type;
 typedef unsigned short int clads_u16_type;
@@ -62,21 +65,31 @@ typedef enum {less, equal, more} clads_order_type;
 /**
  *
  */
-inline void
-clads_shuffle(clads_int_type *list,
+inline clads_void_type
+clads_initialize(clads_void_type);
+
+/**
+ *
+ */
+inline clads_void_type
+clads_finalize(clads_void_type);
+
+/**
+ *
+ */
+
+/**
+ *
+ */
+inline clads_void_type
+clads_shuffle(clads_int_type *vector,
               clads_size_type length);
 
 /**
  *
  */
-inline void
-clads_initialize(void);
-
-/**
- *
- */
 inline clads_real_type
-clads_nrand(void);
+clads_nrand(clads_void_type);
 
 /**
  *

@@ -30,7 +30,7 @@
 typedef struct clads_hash_node
 {
     clads_id_type key;
-    void *info;
+    clads_addr_type info;
 } clads_hash_node_type;
 
 typedef struct clads_hash
@@ -50,30 +50,30 @@ typedef struct clads_hash
  *
  */
 clads_hash_node_type *
-clads_hash_node_new(void);
+clads_hash_node_new(clads_void_type);
 
 /**
  *
  */
-void
+clads_void_type
 clads_hash_node_initialize(clads_hash_node_type *n);
 
 /**
  *
  */
-void
+clads_void_type
 clads_hash_node_finalize(clads_hash_node_type *n);
 
 /**
  *
  */
-void
+clads_void_type
 clads_hash_initialize(clads_hash_type *h);
 
 /**
  *
  */
-void
+clads_void_type
 clads_hash_finalize(clads_hash_type *h);
 
 /**
@@ -102,6 +102,6 @@ clads_hash_search(clads_hash_type *h,
  */
 clads_hash_node_type *
 clads_hash_search_by_info(clads_hash_type *h,
-                          void *info);
+                          clads_addr_type info);
 
 #endif

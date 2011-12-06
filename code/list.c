@@ -22,8 +22,8 @@
 
 
 clads_order_type
-clads_list_default_f_compare(void *a,
-                             void *b)
+clads_list_default_f_compare(clads_addr_type a,
+                             clads_addr_type b)
 {
     /*
      * As default threat as integer values.
@@ -36,7 +36,7 @@ clads_list_default_f_compare(void *a,
 }
 
 clads_list_node_type *
-clads_list_node_new(void)
+clads_list_node_new(clads_void_type)
 {
     clads_list_node_type *n;
 
@@ -46,7 +46,7 @@ clads_list_node_new(void)
     return n;
 }
 
-void
+clads_void_type
 clads_list_node_initialize(clads_list_node_type *n)
 {
     n->prev = NULL;
@@ -54,13 +54,13 @@ clads_list_node_initialize(clads_list_node_type *n)
     n->next = NULL;
 }
 
-void
+clads_void_type
 clads_list_node_finalize(clads_list_node_type *n)
 {
     if (n != NULL)
     {
         if (n->info != NULL)
-            free((void *) n->info);
+            free((clads_addr_type) n->info);
 
         n->info = NULL;
         n->prev = NULL;
@@ -72,7 +72,7 @@ clads_list_node_finalize(clads_list_node_type *n)
 #endif
 }
 
-void
+clads_void_type
 clads_list_initialize(clads_list_type *l)
 {
     l->is_set = false;
@@ -81,7 +81,7 @@ clads_list_initialize(clads_list_type *l)
     l->f_compare = &clads_list_default_f_compare;
 }
 
-void
+clads_void_type
 clads_list_finalize(clads_list_type *l)
 {
     clads_list_node_type *m, *p;
@@ -167,7 +167,7 @@ clads_list_remove(clads_list_type *l,
 
 clads_list_node_type *
 clads_list_search(clads_list_type *l,
-                  void *info)
+                  clads_addr_type info)
 {
     clads_list_node_type *p = l->head;
 

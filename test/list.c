@@ -25,7 +25,8 @@
 #define LIMIT   99
 
 
-void list_print(clads_list_type *l)
+void
+list_print(clads_list_type *l)
 {
     clads_list_node_type *n = l->head;
 

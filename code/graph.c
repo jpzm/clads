@@ -22,8 +22,8 @@
 
 
 clads_order_type
-clads_graph_default_f_compare(void *a,
-                              void *b)
+clads_graph_default_f_compare(clads_addr_type a,
+                              clads_addr_type b)
 {
     /*
      * As default threat as integer values.
@@ -35,7 +35,7 @@ clads_graph_default_f_compare(void *a,
     return more;
 }
 
-void
+clads_void_type
 clads_graph_initialize(clads_graph_type *g)
 {
     g->n_node = 0;
@@ -50,7 +50,7 @@ clads_graph_initialize(clads_graph_type *g)
     clads_list_initialize(g->l_edge);
 }
 
-void
+clads_void_type
 clads_graph_finalize(clads_graph_type *g)
 {
     if (g != NULL)
@@ -74,7 +74,7 @@ clads_graph_copy(const clads_graph_type *ga,
     return 0;
 }
 
-void
+clads_void_type
 clads_graph_clear_adjacency(clads_graph_type *g)
 {
     clads_size_type i;
@@ -89,7 +89,7 @@ clads_graph_clear_adjacency(clads_graph_type *g)
     }
 }
 
-void
+clads_void_type
 clads_graph_mount_adjacency(clads_graph_type *g)
 {
     clads_graph_edge_type *e;
@@ -121,13 +121,13 @@ clads_graph_mount_adjacency(clads_graph_type *g)
         e = (clads_graph_edge_type *) p->info;
 
         n = clads_list_node_new();
-        n->info = (void *) e->nb;
+        n->info = (clads_addr_type) e->nb;
         clads_list_insert(g->l_adjacency[e->na->id], n);
 
         if (!g->is_directed)
         {
             n = clads_list_node_new();
-            n->info = (void *) e->na;
+            n->info = (clads_addr_type) e->na;
             clads_list_insert(g->l_adjacency[e->nb->id], n);
         }
 
@@ -179,7 +179,7 @@ clads_graph_get_node(clads_graph_type *g,
 
 clads_graph_node_type *
 clads_graph_get_node_by_info(clads_graph_type *g,
-                             void *info)
+                             clads_addr_type info)
 {
     clads_list_node_type *l = g->l_edge->head;
     clads_graph_node_type *n;
@@ -201,7 +201,7 @@ clads_graph_edge_type *
 clads_graph_add_edge(clads_graph_type *g,
                      clads_graph_node_type *na,
                      clads_graph_node_type *nb,
-                     void *info)
+                     clads_addr_type info)
 {
     clads_graph_edge_type *e = CLADS_ALLOC(1, clads_graph_edge_type);
     clads_list_node_type *p;
@@ -213,7 +213,7 @@ clads_graph_add_edge(clads_graph_type *g,
     e->info = info;
 
     p = clads_list_node_new();
-    p->info = (void *) e;
+    p->info = (clads_addr_type) e;
     clads_list_insert(g->l_edge, p);
 
     return e;
@@ -221,7 +221,7 @@ clads_graph_add_edge(clads_graph_type *g,
 
 clads_graph_node_type *
 clads_graph_add_node(clads_graph_type *g,
-                     void *info)
+                     clads_addr_type info)
 {
     clads_graph_node_type *n = CLADS_ALLOC(1, clads_graph_node_type);
     clads_list_node_type *p;
@@ -230,7 +230,7 @@ clads_graph_add_node(clads_graph_type *g,
     n->info = info;
 
     p = clads_list_node_new();
-    p->info = (void *) n;
+    p->info = (clads_addr_type) n;
     clads_list_insert(g->l_node, p);
 
     return n;
@@ -251,7 +251,7 @@ clads_graph_get_edges_by_node(clads_graph_type *g,
         if (e->na == n || e->nb == n)
         {
             p = clads_list_node_new();
-            p->info = (void *) e;
+            p->info = (clads_addr_type) e;
             clads_list_insert(r, p);
         }
 
@@ -278,9 +278,9 @@ clads_graph_get_node_neighbors(clads_graph_type *g,
             p = clads_list_node_new();
 
             if (e->na == n)
-                p->info = (void *) e->nb;
+                p->info = (clads_addr_type) e->nb;
             else
-                p->info = (void *) e->na;
+                p->info = (clads_addr_type) e->na;
 
             clads_list_insert(r, p);
         }

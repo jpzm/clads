@@ -32,7 +32,7 @@ typedef struct clads_graph_node
 {
     clads_id_type id;
     clads_real_type clustering;
-    void *info; // used by external libraries and applications
+    clads_addr_type info; // used by external libraries and applications
 } clads_graph_node_type;
 
 /**
@@ -42,7 +42,7 @@ typedef struct clads_graph_edge
 {
     clads_graph_node_type *na;
     clads_graph_node_type *nb;
-    void *info; // used by external libraries and applications
+    clads_addr_type info; // used by external libraries and applications
 } clads_graph_edge_type;
 
 /**
@@ -64,20 +64,20 @@ typedef struct clads_graph
      * This function tell if two nodes have the same information
      * (i.e. are equal).
      */
-    clads_order_type (*f_compare)(void *, void *);
+    clads_order_type (*f_compare)(clads_addr_type, clads_addr_type);
 } clads_graph_type;
 
 
 /**
  * Initialize an given graph
  */
-inline void
+inline clads_void_type
 clads_graph_initialize(clads_graph_type *g);
 
 /**
  * Finalize an given graph
  */
-inline void
+inline clads_void_type
 clads_graph_finalize(clads_graph_type *g);
 
 /**
@@ -94,13 +94,13 @@ clads_graph_copy(const clads_graph_type *ga,
 /**
  *
  */
-void
+clads_void_type
 clads_graph_mount_adjacency(clads_graph_type *g);
 
 /**
  *
  */
-void
+clads_void_type
 clads_graph_clear_adjacency(clads_graph_type *g);
 
 /**
@@ -110,14 +110,14 @@ clads_graph_edge_type *
 clads_graph_add_edge(clads_graph_type *g,
                      clads_graph_node_type *na,
                      clads_graph_node_type *nb,
-                     void *info);
+                     clads_addr_type info);
 
 /**
  *
  */
 clads_graph_node_type *
 clads_graph_add_node(clads_graph_type *g,
-                     void *info);
+                     clads_addr_type info);
 
 /**
  *
@@ -146,7 +146,7 @@ clads_graph_get_node(clads_graph_type *g,
  */
 clads_graph_node_type *
 clads_graph_get_node_by_info(clads_graph_type *g,
-                             void *info);
+                             clads_addr_type info);
 
 /**
  *

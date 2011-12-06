@@ -21,8 +21,8 @@
 #include "clads.h"
 
 
-void
-clads_initialize()
+clads_void_type
+clads_initialize(clads_void_type)
 {
     /*
      * Initialize random number seed.
@@ -48,19 +48,24 @@ clads_initialize()
     srand(foo);
 }
 
-void
-clads_shuffle(clads_int_type *list,
+clads_void_type
+clads_finalize(clads_void_type)
+{
+}
+
+clads_void_type
+clads_shuffle(clads_int_type *vector,
               clads_size_type length)
 {
     clads_uint_type i, ri, a;
 
     for (i = 0; i < length; i++)
     {
-        ri = (unsigned int) clads_rand(0 , length - 1);
+        ri = (clads_uint_type) clads_randint(0 , length - 1);
 
-        a = list[i];
-        list[i] = list[ri];
-        list[ri] = a;
+        a = vector[i];
+        vector[i] = vector[ri];
+        vector[ri] = a;
     }
 }
 

@@ -31,8 +31,8 @@ clads_hash_default_f_hash(clads_size_type m,
 }
 
 clads_order_type
-clads_hash_default_f_compare(void *a,
-                             void *b)
+clads_hash_default_f_compare(clads_addr_type a,
+                             clads_addr_type b)
 {
     clads_hash_node_type *x;
     clads_id_type k;
@@ -48,7 +48,7 @@ clads_hash_default_f_compare(void *a,
 }
 
 clads_hash_node_type *
-clads_hash_node_new(void)
+clads_hash_node_new(clads_void_type)
 {
     clads_hash_node_type *n;
 
@@ -58,14 +58,14 @@ clads_hash_node_new(void)
     return n;
 }
 
-void
+clads_void_type
 clads_hash_node_initialize(clads_hash_node_type *n)
 {
     n->key = 0;
     n->info = NULL;
 }
 
-void
+clads_void_type
 clads_hash_node_finalize(clads_hash_node_type *n)
 {
     if (n != NULL)
@@ -75,7 +75,7 @@ clads_hash_node_finalize(clads_hash_node_type *n)
     }
 }
 
-void
+clads_void_type
 clads_hash_initialize(clads_hash_type *h)
 {
     clads_size_type i;
@@ -95,7 +95,7 @@ clads_hash_initialize(clads_hash_type *h)
     h->f_hash = &clads_hash_default_f_hash;
 }
 
-void
+clads_void_type
 clads_hash_finalize(clads_hash_type *h)
 {
     clads_size_type i;
@@ -117,7 +117,7 @@ clads_hash_finalize(clads_hash_type *h)
 #endif
 }
 
-void
+clads_void_type
 clads_hash_rehash(clads_hash_type *h)
 {
     clads_list_node_type *n, *m;

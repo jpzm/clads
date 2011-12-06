@@ -27,7 +27,7 @@
 typedef struct clads_list_node
 {
     struct clads_list_node *prev;
-    void *info;
+    clads_addr_type info;
     struct clads_list_node *next;
 } clads_list_node_type;
 
@@ -40,7 +40,7 @@ typedef struct clads_list
      * This function tell if two nodes have the same information
      * (i.e. are equal).
      */
-    clads_order_type (*f_compare)(void *, void *);
+    clads_order_type (*f_compare)(clads_addr_type, clads_addr_type);
 } clads_list_type;
 
 
@@ -48,30 +48,30 @@ typedef struct clads_list
  *
  */
 clads_list_node_type *
-clads_list_node_new(void);
+clads_list_node_new(clads_void_type);
 
 /**
  *
  */
-void
+clads_void_type
 clads_list_node_initialize(clads_list_node_type *n);
 
 /**
  *
  */
-void
+clads_void_type
 clads_list_node_finalize(clads_list_node_type *n);
 
 /**
  *
  */
-void
+clads_void_type
 clads_list_initialize(clads_list_type *l);
 
 /**
  *
  */
-void
+clads_void_type
 clads_list_finalize(clads_list_type *l);
 
 /**
@@ -99,6 +99,6 @@ clads_list_remove(clads_list_type *l,
  */
 clads_list_node_type *
 clads_list_search(clads_list_type *l,
-                  void *info);
+                  clads_addr_type info);
 
 #endif

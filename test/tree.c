@@ -25,8 +25,9 @@
 #define LIMIT   99
 
 
-void tree_print(clads_tree_type *t,
-                clads_tree_node_type *n)
+void
+tree_print(clads_tree_type *t,
+           clads_tree_node_type *n)
 {
     if (n != NULL)
     {

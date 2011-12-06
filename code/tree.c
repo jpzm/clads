@@ -22,8 +22,8 @@
 
 
 clads_order_type
-clads_tree_default_f_compare(void *a,
-                             void *b)
+clads_tree_default_f_compare(clads_addr_type a,
+                             clads_addr_type b)
 {
     /*
      * As default threat as integer values.
@@ -36,7 +36,7 @@ clads_tree_default_f_compare(void *a,
 }
 
 clads_tree_node_type *
-clads_tree_node_new(void)
+clads_tree_node_new(clads_void_type)
 {
     clads_tree_node_type *n;
 
@@ -46,7 +46,7 @@ clads_tree_node_new(void)
     return n;
 }
 
-void
+clads_void_type
 clads_tree_node_initialize(clads_tree_node_type *n)
 {
     n->parent = NULL;
@@ -55,7 +55,7 @@ clads_tree_node_initialize(clads_tree_node_type *n)
     n->rchild = NULL;
 }
 
-void
+clads_void_type
 clads_tree_node_finalize(clads_tree_node_type *n)
 {
     if (n != NULL)
@@ -69,7 +69,7 @@ clads_tree_node_finalize(clads_tree_node_type *n)
             clads_tree_node_finalize(n->rchild);
 
         if (n->info != NULL)
-            free((void *) n->info);
+            free((clads_addr_type) n->info);
 
         n->info = NULL;
     }
@@ -79,7 +79,7 @@ clads_tree_node_finalize(clads_tree_node_type *n)
 #endif
 }
 
-void
+clads_void_type
 clads_tree_initialize(clads_tree_type *t)
 {
     t->root = NULL;
@@ -88,7 +88,7 @@ clads_tree_initialize(clads_tree_type *t)
     t->f_compare = &clads_tree_default_f_compare;
 }
 
-void
+clads_void_type
 clads_tree_finalize(clads_tree_type *t)
 {
     if (t != NULL)
@@ -151,7 +151,7 @@ clads_tree_insert(clads_tree_type *t,
     return n;
 }
 
-void
+clads_void_type
 clads_tree_transplant(clads_tree_type *t,
                       clads_tree_node_type *u,
                       clads_tree_node_type *v)
@@ -213,7 +213,7 @@ clads_tree_remove(clads_tree_type *t,
 
 clads_tree_node_type *
 clads_tree_search(clads_tree_type *t,
-                  void *info)
+                  clads_addr_type info)
 {
     clads_tree_node_type *p;
     clads_order_type o;
