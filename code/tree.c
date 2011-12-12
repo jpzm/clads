@@ -203,6 +203,8 @@ clads_tree_remove(clads_tree_type *t,
 
         t->n_node--;
         // TODO update height;
+        n->lchild = NULL;
+        n->rchild = NULL;
         clads_tree_node_finalize(n);
 
         return p;

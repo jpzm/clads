@@ -32,7 +32,7 @@ tree_print(clads_tree_type *t,
     if (n != NULL)
     {
         tree_print(t, n->lchild);
-        printf("%2d ", *CLADS_CAST(n->info, int *));
+        printf("%2d(%p)\n", *CLADS_CAST(n->info, int *), n);
         tree_print(t, n->rchild);
     }
 }
@@ -58,17 +58,16 @@ int main(void)
     }
     printf("\n");
 
-    printf("OLD TREE: ");
+    printf("OLD TREE:\n");
     tree_print(&t, t.root);
     printf("\n");
 
     i = clads_randint(0, LIMIT);
     printf("REMOVING: %2d\n", CLADS_CAST(i, int));
-
     n = clads_tree_search(&t, &i);
     clads_tree_remove(&t, n);
 
-    printf("NEW TREE: ");
+    printf("NEW TREE:\n");
     tree_print(&t, t.root);
     printf("\n");
 
