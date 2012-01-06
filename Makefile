@@ -19,4 +19,6 @@ all:
 clean:
 	cd code; rm -rf *.o
 	cd test; rm -rf \
-		list
+		list \
+		tree \
+		hash
