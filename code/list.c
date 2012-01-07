@@ -29,10 +29,10 @@ clads_list_default_f_compare(clads_addr_type a,
      * As default threat as integer values.
      */
     if (*CLADS_CAST(a, int *) > *CLADS_CAST(b, int *))
-        return more;
+        return clads_more;
     if (*CLADS_CAST(a, int *) < *CLADS_CAST(b, int *))
-        return less;
-    return equal;
+        return clads_less;
+    return clads_equal;
 }
 
 clads_list_node_type *
@@ -75,7 +75,7 @@ clads_list_node_finalize(clads_list_node_type *n)
 clads_void_type
 clads_list_initialize(clads_list_type *l)
 {
-    l->is_set = false;
+    l->is_set = clads_false;
     l->head = NULL;
     l->tail = NULL;
     l->f_compare = &clads_list_default_f_compare;
@@ -125,9 +125,9 @@ clads_bool_type
 clads_list_insert(clads_list_type *l,
                   clads_list_node_type *x)
 {
-    if (l->is_set == true)
+    if (l->is_set == clads_true)
         if (clads_list_search(l, x->info) != NULL)
-            return false;
+            return clads_false;
 
     if (l->head == NULL)
         l->tail = x;
@@ -137,7 +137,7 @@ clads_list_insert(clads_list_type *l,
     x->next = l->head;
     l->head = x;
 
-    return true;
+    return clads_true;
 }
 
 clads_bool_type
@@ -159,10 +159,10 @@ clads_list_remove(clads_list_type *l,
 
         clads_list_node_finalize(x);
 
-        return true;
+        return clads_true;
     }
 
-    return false;
+    return clads_false;
 }
 
 clads_list_node_type *
@@ -173,7 +173,7 @@ clads_list_search(clads_list_type *l,
 
     while (p != NULL)
     {
-        if (l->f_compare(p->info, info) == equal)
+        if (l->f_compare(p->info, info) == clads_equal)
             return p;
 
         p = p->next;

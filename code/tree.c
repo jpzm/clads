@@ -29,10 +29,10 @@ clads_tree_default_f_compare(clads_addr_type a,
      * As default threat as integer values.
      */
     if (*CLADS_CAST(a, int *) > *CLADS_CAST(b, int *))
-        return more;
+        return clads_more;
     if (*CLADS_CAST(a, int *) < *CLADS_CAST(b, int *))
-        return less;
-    return equal;
+        return clads_less;
+    return clads_equal;
 }
 
 clads_tree_node_type *
@@ -84,7 +84,7 @@ clads_tree_initialize(clads_tree_type *t)
 {
     t->root = NULL;
     t->n_node = 0;
-    t->is_set = false;
+    t->is_set = clads_false;
     t->f_compare = &clads_tree_default_f_compare;
 }
 
@@ -123,10 +123,10 @@ clads_tree_insert(clads_tree_type *t,
         o = t->f_compare(p->info, n->info);
         m = p;
 
-        if (o == equal && t->is_set == true)
+        if (o == clads_equal && t->is_set == clads_true)
             return NULL;
 
-        if (o == more)
+        if (o == clads_more)
             p = p->lchild;
         else
             p = p->rchild;
@@ -139,7 +139,7 @@ clads_tree_insert(clads_tree_type *t,
 
     if (m == NULL)
         t->root = n;
-    else if (o == more)
+    else if (o == clads_more)
         m->lchild = n;
     else
         m->rchild = n;
@@ -226,10 +226,10 @@ clads_tree_search(clads_tree_type *t,
     {
         o = t->f_compare(p->info, info);
 
-        if (o == equal)
+        if (o == clads_equal)
             return p;
 
-        if (o == more)
+        if (o == clads_more)
             p = p->lchild;
         else
             p = p->rchild;

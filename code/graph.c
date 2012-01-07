@@ -29,10 +29,10 @@ clads_graph_default_f_compare(clads_addr_type a,
      * As default threat as integer values.
      */
     if (*((int *) a) == *((int *) b))
-        return equal;
+        return clads_equal;
     if (*((int *) a) < *((int *) b))
-        return less;
-    return more;
+        return clads_less;
+    return clads_more;
 }
 
 clads_void_type
@@ -42,7 +42,7 @@ clads_graph_initialize(clads_graph_type *g)
     g->n_edge = 0;
     g->l_node = NULL;
     g->l_edge = NULL;
-    g->is_directed = false;
+    g->is_directed = clads_false;
     g->l_adjacency = NULL;
     g->f_compare = &clads_graph_default_f_compare;
 
@@ -188,7 +188,7 @@ clads_graph_get_node_by_info(clads_graph_type *g,
     {
         n = (clads_graph_node_type *) l->info;
 
-        if (g->f_compare(n->info, info) == equal)
+        if (g->f_compare(n->info, info) == clads_equal)
             return n;
 
         l = l->next;

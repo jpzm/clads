@@ -41,10 +41,10 @@ clads_hash_default_f_compare(clads_addr_type a,
     k = *CLADS_CAST(b, clads_id_type *);
 
     if (x->key > k)
-        return more;
+        return clads_more;
     if (x->key < k)
-        return less;
-    return equal;
+        return clads_less;
+    return clads_equal;
 }
 
 clads_hash_node_type *
@@ -82,7 +82,7 @@ clads_hash_initialize(clads_hash_type *h)
 
     h->size = CLADS_HASH_INITIAL_TABLE_SIZE;
     h->table = CLADS_ALLOC(h->size, clads_list_type *);
-    h->is_set = false;
+    h->is_set = clads_false;
 
     for (i = 0; i < h->size; i++)
     {
@@ -168,9 +168,9 @@ clads_hash_insert(clads_hash_type *h,
     clads_list_node_type *e;
     clads_size_type i;
 
-    if (h->is_set == true)
+    if (h->is_set == clads_true)
         if (clads_hash_search(h, n->key) != NULL)
-            return false;
+            return clads_false;
 
     if (h->size == h->n_node)
         clads_hash_rehash(h);
@@ -181,7 +181,7 @@ clads_hash_insert(clads_hash_type *h,
     clads_list_insert(h->table[i], e);
     h->n_node++;
 
-    return true;
+    return clads_true;
 }
 
 clads_bool_type
@@ -198,11 +198,11 @@ clads_hash_remove(clads_hash_type *h,
             clads_list_remove(h->table[i], e);
             h->n_node--;
 
-            return true;
+            return clads_true;
         }
     }
 
-    return false;
+    return clads_false;
 }
 
 clads_hash_node_type *
