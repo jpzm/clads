@@ -31,7 +31,8 @@ clads_hash_default_f_hash(clads_size_type m,
 }
 
 clads_order_type
-clads_hash_default_f_compare(clads_addr_type a,
+clads_hash_default_f_compare(clads_list_type *l,
+                             clads_addr_type a,
                              clads_addr_type b)
 {
     clads_hash_node_type *x;

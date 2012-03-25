@@ -42,7 +42,7 @@ list_print(clads_list_type *l)
 int main(void)
 {
     clads_list_node_type *n;
-    clads_list_type l;
+    clads_list_type l, *c;
     clads_size_type i;
 
     clads_initialize();
@@ -59,6 +59,7 @@ int main(void)
 
     printf("OLD LIST: ");
     list_print(&l);
+    c = clads_list_copy(&l);
 
     i = clads_randint(0, LIMIT);
     printf("REMOVING: %2d\n", CLADS_CAST(i, int));
@@ -69,7 +70,11 @@ int main(void)
     printf("NEW LIST: ");
     list_print(&l);
 
+    printf("OLD COPY: ");
+    list_print(c);
+
     clads_list_finalize(&l);
+    clads_list_finalize(c);
 
     return 0;
 }

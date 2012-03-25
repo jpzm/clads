@@ -2,3 +2,6 @@
 *.so
 *.swp
 *.pyc
+test/list
+test/hash
+test/tree

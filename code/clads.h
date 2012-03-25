@@ -57,9 +57,17 @@ typedef long long int clads_int_type;
 typedef unsigned long long int clads_uint_type;
 typedef clads_uint_type clads_id_type;
 typedef clads_uint_type clads_size_type;
-typedef enum {clads_false, clads_true} clads_bool_type;
-typedef enum {clads_off, clads_on} clads_key_type;
-typedef enum {clads_less, clads_equal, clads_more} clads_order_type;
+
+typedef enum {clads_false = 0,
+              clads_true = 1} clads_bool_type;
+
+typedef enum {clads_off = 0,
+              clads_on = 1} clads_key_type;
+
+typedef enum {clads_less = -1,
+              clads_equal = 0,
+              clads_more = 1,
+              clads_unknown = 2} clads_order_type;
 
 
 /**
@@ -73,10 +81,6 @@ clads_initialize(clads_void_type);
  */
 inline clads_void_type
 clads_finalize(clads_void_type);
-
-/**
- *
- */
 
 /**
  *

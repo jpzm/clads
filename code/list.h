@@ -1,7 +1,7 @@
 /**
- * Copyright (C) 2011 Joao Paulo de Souza Medeiros
+ * Copyright (C) 2011-2012 Joao Paulo de Souza Medeiros
  *
- * Author(s): Joao Paulo de Souza Medeiros <ignotus21@gmail.com>
+ * Author(s): Joao Paulo de Souza Medeiros <jpsm1985@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,12 +35,30 @@ typedef struct clads_list
 {
     clads_list_node_type *head;
     clads_list_node_type *tail;
+    clads_list_node_type *iter;
+    clads_bool_type do_free_info;
+    /*
+     * This flag indicates to `clads_list_insert' function to not insert
+     * duplicated nodes.
+     * But, this flag do not change `clads_list_push' and `clads_list_enqueue'
+     * functions behaviour.
+     */
     clads_bool_type is_set;
     /*
      * This function tell if two nodes have the same information
      * (i.e. are equal).
      */
-    clads_order_type (*f_compare)(clads_addr_type, clads_addr_type);
+    clads_order_type (*f_compare)(struct clads_list *,
+                                  clads_addr_type,
+                                  clads_addr_type);
+    /*
+     * This function creates a copy of node's information.
+     */
+    clads_addr_type (*f_copy)(clads_addr_type);
+    /*
+     * Used by external programs to store extra information (e.g. bindings).
+     */
+    clads_addr_type more;
 } clads_list_type;
 
 
@@ -60,7 +78,8 @@ clads_list_node_initialize(clads_list_node_type *n);
  *
  */
 clads_void_type
-clads_list_node_finalize(clads_list_node_type *n);
+clads_list_node_finalize(clads_list_node_type *n,
+                         clads_bool_type do_free_info);
 
 /**
  *
@@ -77,8 +96,20 @@ clads_list_finalize(clads_list_type *l);
 /**
  *
  */
+clads_list_type *
+clads_list_copy(clads_list_type *l);
+
+/**
+ *
+ */
 clads_size_type
 clads_list_size(clads_list_type *l);
+
+/**
+ *
+ */
+clads_bool_type
+clads_list_is_empty(clads_list_type *l);
 
 /**
  *
@@ -100,5 +131,37 @@ clads_list_remove(clads_list_type *l,
 clads_list_node_type *
 clads_list_search(clads_list_type *l,
                   clads_addr_type info);
+
+/**
+ *
+ */
+clads_bool_type
+clads_list_push(clads_list_type *l,
+                clads_list_node_type *x);
+
+/**
+ *
+ */
+clads_list_node_type *
+clads_list_pop(clads_list_type *l);
+
+/**
+ *
+ */
+clads_bool_type
+clads_list_enqueue(clads_list_type *l,
+                   clads_list_node_type *x);
+
+/**
+ *
+ */
+clads_list_node_type *
+clads_list_dequeue(clads_list_type *l);
+
+/**
+ *
+ */
+clads_list_node_type *
+clads_list_next(clads_list_type *l);
 
 #endif

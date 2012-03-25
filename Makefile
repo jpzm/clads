@@ -15,6 +15,7 @@ all:
 		../code/clads.o \
 		../code/list.o \
 		../code/hash.o
+	cd bind; python setup.py build_ext -f -b clads
 
 clean:
 	cd code; rm -rf *.o
@@ -22,3 +23,5 @@ clean:
 		list \
 		tree \
 		hash
+	cd bind; rm -rf clads/*.so clads/*.pyc \
+		rm -rf build/

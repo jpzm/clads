@@ -1,7 +1,7 @@
 /**
- * Copyright (C) 2010-2011 Joao Paulo de Souza Medeiros
+ * Copyright (C) 2010-2012 Joao Paulo de Souza Medeiros
  *
- * Author(s): João Paulo de Souza Medeiros <ignotus21@gmail.com>
+ * Author(s): Joao Paulo de Souza Medeiros <ignotus21@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,8 @@
 
 
 clads_order_type
-clads_graph_default_f_compare(clads_addr_type a,
+clads_graph_default_f_compare(clads_graph_type *g,
+                              clads_addr_type a,
                               clads_addr_type b)
 {
     /*
@@ -35,6 +36,34 @@ clads_graph_default_f_compare(clads_addr_type a,
     return clads_more;
 }
 
+clads_addr_type
+clads_graph_edge_f_copy(clads_addr_type a)
+{
+    clads_graph_edge_type *f = CLADS_ALLOC(1, clads_graph_edge_type);
+    clads_graph_edge_type *e = CLADS_CAST(a, clads_graph_edge_type *);
+
+    f->na = e->na;
+    f->nb = e->nb;
+    f->info = e->info;
+    f->key = e->key;
+
+    return CLADS_CAST(f, clads_addr_type);
+}
+
+clads_addr_type
+clads_graph_node_f_copy(clads_addr_type a)
+{
+    clads_graph_node_type *m = CLADS_ALLOC(1, clads_graph_node_type);
+    clads_graph_node_type *n = CLADS_CAST(a, clads_graph_node_type *);
+
+    m->id = n->id;
+    m->clustering = n->clustering;
+    m->info = n->info;
+    m->key = n->key;
+
+    return CLADS_CAST(m, clads_addr_type);
+}
+
 clads_void_type
 clads_graph_initialize(clads_graph_type *g)
 {
@@ -42,12 +71,41 @@ clads_graph_initialize(clads_graph_type *g)
     g->n_edge = 0;
     g->l_node = NULL;
     g->l_edge = NULL;
+    g->allow_loop = clads_false;
+    g->allow_multiple_edges = clads_false;
     g->is_directed = clads_false;
     g->l_adjacency = NULL;
     g->f_compare = &clads_graph_default_f_compare;
+    g->more = NULL;
 
     clads_list_initialize(g->l_node);
+    g->l_node->f_copy = &clads_graph_node_f_copy;
     clads_list_initialize(g->l_edge);
+    g->l_edge->f_copy = &clads_graph_edge_f_copy;
+}
+
+clads_graph_type *
+clads_graph_copy(clads_graph_type *g)
+{
+    clads_graph_type *ng = CLADS_ALLOC(1, clads_graph_type);
+
+    ng->n_node = g->n_node;
+    ng->n_edge = g->n_edge;
+    ng->allow_loop = g->allow_loop;
+    ng->allow_multiple_edges = g->allow_multiple_edges;
+    ng->is_directed = g->is_directed;
+    ng->f_compare = g->f_compare;
+    ng->more = g->more;
+
+    ng->l_edge = clads_list_copy(g->l_edge);
+    ng->l_node = clads_list_copy(g->l_node);
+
+    if (g->l_adjacency != NULL)
+        clads_graph_mount_adjacency(ng);
+    else
+        ng->l_adjacency = NULL;
+
+    return ng;
 }
 
 clads_void_type
@@ -65,13 +123,98 @@ clads_graph_finalize(clads_graph_type *g)
 #endif
 }
 
-clads_bool_type
-clads_graph_copy(const clads_graph_type *ga,
-                 clads_graph_type *gb)
+clads_graph_type *
+clads_graph_new_erdos_nm(clads_size_type n,
+                         clads_size_type m,
+                         clads_bool_type is_directed,
+                         clads_bool_type allow_loop,
+                         clads_bool_type allow_multiple_edges)
 {
-    // TODO: what? everything!
+    clads_graph_node_type **v = CLADS_ALLOC(n, clads_graph_node_type *);
+    clads_graph_type *g = CLADS_ALLOC(1, clads_graph_type);
+    clads_graph_node_type *na, *nb;
 
-    return 0;
+    clads_graph_initialize(g);
+
+    g->is_directed = is_directed;
+    g->allow_loop = allow_loop;
+    g->allow_multiple_edges = allow_multiple_edges;
+
+    /*
+     * Creating nodes.
+     */
+    while (g->n_node < n)
+        v[g->n_node - 1] = clads_graph_add_node(g, NULL);
+
+    /*
+     * Creating edges.
+     */
+    while (g->n_edge < m)
+    {
+        na = v[clads_randint(0, n - 1)];
+        nb = v[clads_randint(0, n - 1)];
+
+        clads_graph_add_edge(g, na, nb, NULL);
+    }
+
+    CLADS_FREE(v);
+
+    return g;
+}
+
+clads_graph_type *
+clads_graph_new_erdos_np(clads_size_type n,
+                         clads_real_type p,
+                         clads_bool_type is_directed,
+                         clads_bool_type allow_loop,
+                         clads_bool_type allow_multiple_edges)
+{
+    clads_graph_node_type **v = CLADS_ALLOC(n, clads_graph_node_type *);
+    clads_graph_type *g = CLADS_ALLOC(1, clads_graph_type);
+    clads_size_type i, j, start;
+
+    clads_graph_initialize(g);
+
+    g->is_directed = is_directed;
+    g->allow_loop = allow_loop;
+    g->allow_multiple_edges = allow_multiple_edges;
+
+    /*
+     * Creating nodes.
+     */
+    while (g->n_node < n)
+        v[g->n_node - 1] = clads_graph_add_node(g, NULL);
+
+    /*
+     * Creating edges.
+     */
+    for (i = 0; i < g->n_node; i++)
+    {
+        start = (g->is_directed == clads_true) ? 0 : i;
+
+        for (j = start; j < g->n_node; j++)
+        {
+            if (clads_statistic_uniform_trial(p))
+                clads_graph_add_edge(g, v[i], v[j], NULL);
+        }
+    }
+
+    CLADS_FREE(v);
+
+    return g;
+}
+
+clads_graph_edge_type *
+clads_graph_edge_new(clads_void_type)
+{
+    clads_graph_edge_type *e = CLADS_ALLOC(1, clads_graph_edge_type);
+
+    e->na = NULL;
+    e->nb = NULL;
+    e->info = NULL;
+    e->key = clads_off;
+
+    return e;
 }
 
 clads_void_type
@@ -82,7 +225,10 @@ clads_graph_clear_adjacency(clads_graph_type *g)
     if (g->l_adjacency != NULL)
     {
         for (i = 0; i < g->n_node; i++)
+        {
             clads_list_finalize(g->l_adjacency[i]);
+            CLADS_FREE(g->l_adjacency[i]);
+        }
 
         CLADS_FREE(g->l_adjacency);
         g->l_adjacency = NULL;
@@ -104,19 +250,18 @@ clads_graph_mount_adjacency(clads_graph_type *g)
     g->l_adjacency = CLADS_ALLOC(g->n_node, clads_list_type *);
 
     /*
-     * Initializing lists
+     * Initializing lists.
      */
     for (i = 0; i < g->n_node; i++)
     {
         g->l_adjacency[i] = CLADS_ALLOC(1, clads_list_type);
+        clads_list_initialize(g->l_adjacency[i]);
     }
 
     /*
-     * Fill the adjacency list
+     * Fill the adjacency list.
      */
-    p = g->l_edge->head;
-
-    while (p != NULL)
+    while ((p = clads_list_next(g->l_edge)))
     {
         e = (clads_graph_edge_type *) p->info;
 
@@ -130,9 +275,44 @@ clads_graph_mount_adjacency(clads_graph_type *g)
             n->info = (clads_addr_type) e->na;
             clads_list_insert(g->l_adjacency[e->nb->id], n);
         }
-
-        p = p->next;
     }
+}
+
+clads_list_type *
+clads_graph_get_edges_by_nodes(clads_graph_type *g,
+                               clads_graph_node_type *na,
+                               clads_graph_node_type *nb)
+{
+    clads_list_node_type *l = g->l_edge->head;
+    clads_graph_edge_type *e;
+    clads_list_node_type *p;
+
+    clads_list_type *r = CLADS_ALLOC(1, clads_list_type);
+    clads_list_initialize(r);
+
+    while (l != NULL)
+    {
+        e = (clads_graph_edge_type *) l->info;
+
+        if ((e->na == na && e->nb == nb) ||
+            (!g->is_directed && e->na == nb && e->nb == na))
+        {
+            p = clads_list_node_new();
+            p->info = e;
+            clads_list_insert(r, p);
+        }
+
+        l = l->next;
+    }
+
+    if (clads_list_is_empty(r) == clads_true)
+    {
+        clads_list_finalize(r);
+        CLADS_FREE(r);
+        r = NULL;
+    }
+
+    return r;
 }
 
 clads_graph_edge_type *
@@ -188,7 +368,7 @@ clads_graph_get_node_by_info(clads_graph_type *g,
     {
         n = (clads_graph_node_type *) l->info;
 
-        if (g->f_compare(n->info, info) == clads_equal)
+        if (g->f_compare(g, n->info, info) == clads_equal)
             return n;
 
         l = l->next;
@@ -203,8 +383,17 @@ clads_graph_add_edge(clads_graph_type *g,
                      clads_graph_node_type *nb,
                      clads_addr_type info)
 {
-    clads_graph_edge_type *e = CLADS_ALLOC(1, clads_graph_edge_type);
+    clads_graph_edge_type *e;
     clads_list_node_type *p;
+
+    if (g->allow_loop == clads_false && na == nb)
+        return NULL;
+
+    if (g->allow_multiple_edges == clads_false &&
+        clads_graph_get_edge_by_nodes(g, na, nb) != NULL)
+        return NULL;
+
+    e = CLADS_ALLOC(1, clads_graph_edge_type);
 
     g->n_edge++;
 
@@ -241,8 +430,10 @@ clads_graph_get_edges_by_node(clads_graph_type *g,
                               clads_graph_node_type *n)
 {
     clads_list_node_type *p, *l = g->l_edge->head;
-    clads_list_type *r = NULL;
+    clads_list_type *r = CLADS_ALLOC(1, clads_list_type);
     clads_graph_edge_type *e;
+
+    clads_list_initialize(r);
 
     while (l != NULL)
     {
@@ -266,8 +457,10 @@ clads_graph_get_node_neighbors(clads_graph_type *g,
                                clads_graph_node_type *n)
 {
     clads_list_node_type *p, *l = g->l_edge->head;
-    clads_list_type *r = (clads_list_type *) CLADS_ALLOC(1, clads_list_type);
+    clads_list_type *r = CLADS_ALLOC(1, clads_list_type);
     clads_graph_edge_type *e;
+
+    clads_list_initialize(r);
 
     while (l != NULL)
     {
@@ -323,10 +516,78 @@ clads_graph_node_clustering(clads_graph_type *g,
 }
 
 clads_list_type *
-clads_graph_spanning_tree(clads_graph_type *g,
-                          clads_graph_node_type *n)
+clads_graph_spanning_tree(clads_graph_type *g)
 {
-    // TODO
+    clads_graph_node_type *a, *b;
+    clads_graph_edge_type *e;
+    clads_list_node_type *l;
+    clads_list_type *q = CLADS_ALLOC(1, clads_list_type);
+    clads_list_type *r = CLADS_ALLOC(1, clads_list_type);
 
-    return NULL;
+    clads_list_initialize(q);
+    clads_list_initialize(r);
+
+    /*
+     * Initialize nodes as unvisited.
+     */
+    while ((l = clads_list_next(g->l_node)))
+    {
+        a = CLADS_CAST(l->info, clads_graph_node_type *);
+        a->key = clads_off;
+    }
+
+    /*
+     * Using breadth-first-search to select the edges for the spanning tree.
+     */
+    clads_graph_mount_adjacency(g);
+
+    a = CLADS_CAST(g->l_node->head->info, clads_graph_node_type *);
+    a->key = clads_on;
+
+    l = clads_list_node_new();
+    l->info = a;
+
+    clads_list_enqueue(q, l);
+
+    while (clads_list_is_empty(q) == clads_false)
+    {
+        l = clads_list_dequeue(q);
+        a = CLADS_CAST(l->info, clads_graph_node_type *);
+
+        /*
+         * Iterate over each neighbor of node `a'.
+         */
+        while ((l = clads_list_next(g->l_adjacency[a->id])))
+        {
+            b = CLADS_CAST(l, clads_graph_node_type *);
+
+            /*
+             * If node `b' not visited yet, do it.
+             */
+            if (b->key == clads_off)
+            {
+                b->key = clads_on;
+
+                l = clads_list_node_new();
+                l->info = b;
+                clads_list_enqueue(q, l);
+
+                e = clads_graph_edge_new();
+                e->na = a;
+                e->nb = b;
+                l = clads_list_node_new();
+                l->info = e;
+                clads_list_insert(r, l);
+            }
+        }
+    }
+
+    if (clads_list_is_empty(r) == clads_true)
+    {
+        clads_list_finalize(r);
+        CLADS_FREE(r);
+        r = NULL;
+    }
+
+    return r;
 }
