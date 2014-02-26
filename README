@@ -1,7 +1,7 @@
 INTRODUCTION
 ============
 
-CLADS stands for `C Library for Algorithmics and Data Structers'.
+CLADS stands for `C Library for Algorithmics and Data Structures'.
 The choice of C language was made based on its fastness, portability and
 embeddable capabilities. More information about CLADS could be find on its
 repository [0].
