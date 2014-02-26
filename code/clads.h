@@ -85,6 +85,13 @@ clads_finalize(clads_void_type);
 /**
  *
  */
+inline clads_size_type
+clads_loop_index(clads_size_type i,
+                 clads_size_type n);
+
+/**
+ *
+ */
 inline clads_void_type
 clads_shuffle(clads_int_type *vector,
               clads_size_type length);

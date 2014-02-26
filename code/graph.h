@@ -33,6 +33,7 @@ typedef struct clads_graph_node
 {
     clads_id_type id;
     clads_real_type clustering;
+    clads_size_type degree;
     clads_addr_type info; // used by external libraries and applications
     clads_key_type key;
 } clads_graph_node_type;
@@ -42,6 +43,7 @@ typedef struct clads_graph_node
  */
 typedef struct clads_graph_edge
 {
+    clads_id_type id;
     clads_graph_node_type *na;
     clads_graph_node_type *nb;
     clads_addr_type info; // used by external libraries and applications
@@ -94,7 +96,7 @@ clads_graph_finalize(clads_graph_type *g);
 /**
  * Create a new graph based on Erdos-Renyi G(n, m) network model.
  */
-inline clads_graph_type *
+clads_graph_type *
 clads_graph_new_erdos_nm(clads_size_type n,
                          clads_size_type m,
                          clads_bool_type is_directed,
@@ -104,7 +106,7 @@ clads_graph_new_erdos_nm(clads_size_type n,
 /**
  * Create a new graph based on Erdos-Renyi G(n, p) network model.
  */
-inline clads_graph_type *
+clads_graph_type *
 clads_graph_new_erdos_np(clads_size_type n,
                          clads_real_type p,
                          clads_bool_type is_directed,
@@ -114,7 +116,7 @@ clads_graph_new_erdos_np(clads_size_type n,
 /**
  * Create a new graph based on Watts-Strogatz network model (small-world).
  */
-inline clads_graph_type *
+clads_graph_type *
 clads_graph_new_watts(clads_size_type n,    // Size.
                       clads_size_type k,    // Neighborhood.
                       clads_real_type p,    // Rewiring probability.
@@ -125,7 +127,7 @@ clads_graph_new_watts(clads_size_type n,    // Size.
 /**
  * Create a new graph based on Barabasi-Albert network model (scale-free).
  */
-inline clads_graph_type *
+clads_graph_type *
 clads_graph_new_barabasi(clads_size_type n,
                          clads_size_type m,
                          clads_bool_type is_directed,

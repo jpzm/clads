@@ -5,16 +5,16 @@ default: all
 
 all:
 	cd code; ${CC} ${CFLAGS} -shared -fPIC -c *.c
-	cd test; ${CC} ${CFLAGS} list.c -o list -lm \
+	cd test; ${CC} ${CFLAGS} list.c -o list \
 		../code/clads.o \
-		../code/list.o
-	cd test; ${CC} ${CFLAGS} tree.c -o tree -lm \
+		../code/list.o -lm
+	cd test; ${CC} ${CFLAGS} tree.c -o tree \
 		../code/clads.o \
-		../code/tree.o
-	cd test; ${CC} ${CFLAGS} hash.c -o hash -lm \
+		../code/tree.o -lm
+	cd test; ${CC} ${CFLAGS} hash.c -o hash \
 		../code/clads.o \
 		../code/list.o \
-		../code/hash.o
+		../code/hash.o -lm
 	cd bind; python setup.py build_ext -f -b clads
 
 clean:

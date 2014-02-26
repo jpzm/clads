@@ -69,8 +69,8 @@ clads_graph_initialize(clads_graph_type *g)
 {
     g->n_node = 0;
     g->n_edge = 0;
-    g->l_node = NULL;
-    g->l_edge = NULL;
+    g->l_node = CLADS_ALLOC(1, clads_list_type);
+    g->l_edge = CLADS_ALLOC(1, clads_list_type);
     g->allow_loop = clads_false;
     g->allow_multiple_edges = clads_false;
     g->is_directed = clads_false;
@@ -80,8 +80,10 @@ clads_graph_initialize(clads_graph_type *g)
 
     clads_list_initialize(g->l_node);
     g->l_node->f_copy = &clads_graph_node_f_copy;
+    g->l_node->do_free_info = clads_false;
     clads_list_initialize(g->l_edge);
     g->l_edge->f_copy = &clads_graph_edge_f_copy;
+    g->l_edge->do_free_info = clads_false;
 }
 
 clads_graph_type *
@@ -196,6 +198,118 @@ clads_graph_new_erdos_np(clads_size_type n,
         {
             if (clads_statistic_uniform_trial(p))
                 clads_graph_add_edge(g, v[i], v[j], NULL);
+        }
+    }
+
+    CLADS_FREE(v);
+
+    return g;
+}
+
+clads_graph_type *
+clads_graph_new_watts(clads_size_type n,
+                      clads_size_type k,
+                      clads_real_type p,
+                      clads_bool_type is_directed,
+                      clads_bool_type allow_loop,
+                      clads_bool_type allow_multiple_edges)
+{
+    clads_graph_node_type *r, **v = CLADS_ALLOC(n, clads_graph_node_type *);
+    clads_graph_type *g = CLADS_ALLOC(1, clads_graph_type);
+    clads_graph_edge_type *e;
+    clads_list_node_type *l;
+    clads_size_type i, j;
+
+    clads_graph_initialize(g);
+
+    g->is_directed = is_directed;
+    g->allow_loop = allow_loop;
+    g->allow_multiple_edges = allow_multiple_edges;
+
+    /*
+     * Creating nodes.
+     */
+    while (g->n_node < n)
+        v[g->n_node - 1] = clads_graph_add_node(g, NULL);
+
+    /*
+     * Creating edges (multiple edges and loops are threated by
+     * `clads_graph_add_edge' function).
+     */
+    for (i = 0; i < g->n_node; i++)
+    {
+        clads_graph_add_edge(g, v[i], v[i], NULL);
+
+        for (j = 1; j <= k / 2; j++)
+        {
+            clads_graph_add_edge(g, v[i], v[clads_loop_index(i + j, n)], NULL);
+            clads_graph_add_edge(g, v[i], v[clads_loop_index(i - j, n)], NULL);
+        }
+    }
+
+    /*
+     * Rewiring edges.
+     */
+    while ((l = clads_list_next(g->l_edge)))
+    {
+        e = (clads_graph_edge_type *) l->info;
+
+        if (clads_statistic_uniform_trial(p))
+        {
+            r = v[clads_randint(0, n - 1)];
+
+            if (clads_statistic_uniform_trial(0.5))
+                e->na = r;
+            else
+                e->nb = r;
+        }
+    }
+
+    CLADS_FREE(v);
+
+    return g;
+}
+
+clads_graph_type *
+clads_graph_new_barabasi(clads_size_type n,
+                         clads_size_type m,
+                         clads_bool_type is_directed,
+                         clads_bool_type allow_loop,
+                         clads_bool_type allow_multiple_edges)
+{
+    clads_graph_node_type **v = CLADS_ALLOC(n, clads_graph_node_type *);
+    clads_graph_type *g = CLADS_ALLOC(1, clads_graph_type);
+    clads_size_type count, index, drawn;
+
+    clads_graph_initialize(g);
+
+    g->is_directed = is_directed;
+    g->allow_loop = allow_loop;
+    g->allow_multiple_edges = allow_multiple_edges;
+
+    /*
+     * Creating the first `m' nodes.
+     */
+    while (g->n_node < m)
+        v[g->n_node - 1] = clads_graph_add_node(g, NULL);
+
+    /*
+     * Creating the remaining `n' - `m' nodes.
+     */
+    while (g->n_node < n)
+    {
+        count = 0;
+        index = g->n_node;
+
+        v[index] = clads_graph_add_node(g, NULL);
+
+        while (count < m)
+        {
+            // TODO: probabilistic function.
+            drawn = 0;
+
+            if (clads_graph_add_edge(g, v[index], v[drawn], NULL))
+                count++;
         }
     }
 
@@ -395,7 +509,7 @@ clads_graph_add_edge(clads_graph_type *g,
 
     e = CLADS_ALLOC(1, clads_graph_edge_type);
 
-    g->n_edge++;
+    e->id = g->n_edge++;
 
     e->na = na;
     e->nb = nb;
