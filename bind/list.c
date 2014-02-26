@@ -1,7 +1,7 @@
 /**
  * Copyright (C) 2012 Joao Paulo de Souza Medeiros
  *
- * Author(s): Joao Paulo de Souza Medeiros <jpsm1985@gmail.com>
+ * Author(s): Joao Paulo de Souza Medeiros <ignotus21@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,14 @@
 #include "bind/list.h"
 
 void
-clads_b_list_finalize(clads_list_type *l)
+clads_b_list_finalize(clads_addr_type l)
 {
-    clads_list_finalize(l);
-    free((void *) l->more);
-    free((void *) l);
+    if (l != NULL)
+    {
+        clads_list_finalize(CLADS_CAST(l, clads_list_type *));
+        free((void *) CLADS_CAST(l, clads_list_type *)->more);
+        free((void *) CLADS_CAST(l, clads_list_type *));
+    }
 }
 
 clads_order_type
@@ -106,26 +109,22 @@ clads_b_list_initialize(PyObject *self, PyObject *args)
     /*
      * Call the function
      */
-    PyObject *a = NULL;
     clads_b_list_type *b_l = CLADS_ALLOC(1, clads_b_list_type);
     clads_list_type *l; 
 
-    if (PyArg_ParseTuple(args, "O", &a))
-        l = (clads_list_type *) PyCObject_AsVoidPtr(a);
-    else
-        l = CLADS_ALLOC(1, clads_list_type);
+    b_l->f_compare_callback = (void *) NULL;
 
+    l = CLADS_ALLOC(1, clads_list_type);
     clads_list_initialize(l);
     l->do_free_info = clads_false;
-    l->f_compare = &clads_b_list_f_compare;
 
+    l->f_compare = &clads_b_list_f_compare;
     l->more = b_l;
-    b_l->f_compare_callback = (void *) NULL;
 
     /*
      * Convert output
      */
-    return PyCObject_FromVoidPtr(l, (void *) clads_b_list_finalize);
+    return PyCObject_FromVoidPtr(l, &clads_b_list_finalize);
 }
 
 PyObject*
@@ -179,12 +178,12 @@ clads_b_list_insert(PyObject *self, PyObject *args)
     if (clads_list_insert(l, n) == clads_true)
         Py_INCREF(x);
     else
-        clads_list_node_finalize(n,l->do_free_info);
+        clads_list_node_finalize(n, l->do_free_info);
 
     /*
      * Convert output
      */
-    return PyCObject_FromVoidPtr(NULL, (void *) NULL);
+    Py_RETURN_TRUE;
 }
 
 PyObject*
@@ -228,7 +227,7 @@ clads_b_list_remove(PyObject *self, PyObject *args)
     /*
      * Convert output
      */
-    return PyCObject_FromVoidPtr(NULL, (void *) NULL);
+    Py_RETURN_TRUE;
 }
 
 PyObject*
@@ -260,11 +259,11 @@ clads_b_list_next(PyObject *self, PyObject *args)
 }
 
 PyMODINIT_FUNC
-initlist(void)
+initclads_list(void)
 {
     PyObject *m;
 
-    m = Py_InitModule4("list",
+    m = Py_InitModule4("clads_list",
             CladsListMethods,
             module__doc__,
             (PyObject *) NULL,

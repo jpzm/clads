@@ -1,7 +1,7 @@
 /**
  * Copyright (C) 2012 Joao Paulo de Souza Medeiros
  *
- * Author(s): Joao Paulo de Souza Medeiros <jpsm1985@gmail.com>
+ * Author(s): Joao Paulo de Souza Medeiros <ignotus21@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef CLADS_LIST_BIND_H
-#define CLADS_LIST_BIND_H
+#ifndef CLADS_GRAPH_BIND_H
+#define CLADS_GRAPH_BIND_H
 
 
 #include <Python.h>
@@ -53,50 +53,58 @@ clads_b_graph_size(PyObject *self, PyObject *args);
 /**
  *
  */
-static char insert_node__doc__[] = "Insert a node on the graph";
+static char add_node__doc__[] = "Insert a node on the graph";
 
 static PyObject*
-clads_b_graph_insert_node(PyObject *self, PyObject *args);
+clads_b_graph_add_node(PyObject *self, PyObject *args);
 
 /**
  *
  */
-static char remove_node__doc__[] = "Remove a node from the graph";
+static char add_edge__doc__[] = "Insert an edge on the graph";
 
 static PyObject*
-clads_b_graph_remove_node(PyObject *self, PyObject *args);
+clads_b_graph_add_edge(PyObject *self, PyObject *args);
 
 /**
  *
  */
-static char next_node__doc__[] = "Get the next node element from the graph";
+static char get_node_info__doc__[] = "Get node's info";
 
 static PyObject*
-clads_b_graph_next_node(PyObject *self, PyObject *args);
+clads_b_graph_get_node_info(PyObject *self, PyObject *args);
 
 /**
  *
  */
-static char insert_edge__doc__[] = "Insert an edge on the graph";
+static char get_edge_info__doc__[] = "Get edge's info";
 
 static PyObject*
-clads_b_graph_insert_edge(PyObject *self, PyObject *args);
+clads_b_graph_get_edge_info(PyObject *self, PyObject *args);
 
 /**
  *
  */
-static char remove_edge__doc__[] = "Remove a edge from the graph";
+static char get_node_id__doc__[] = "Get node's id";
 
 static PyObject*
-clads_b_graph_remove_edge(PyObject *self, PyObject *args);
+clads_b_graph_get_node_id(PyObject *self, PyObject *args);
 
 /**
  *
  */
-static char next_edge__doc__[] = "Get the next edge element from the graph";
+static char get_edge_id__doc__[] = "Get edge's id";
 
 static PyObject*
-clads_b_graph_next_edge(PyObject *self, PyObject *args);
+clads_b_graph_get_edge_id(PyObject *self, PyObject *args);
+
+/**
+ *
+ */
+static char get_edge_nodes__doc__[] = "Get edge's nodes";
+
+static PyObject*
+clads_b_graph_get_edge_nodes(PyObject *self, PyObject *args);
 
 /**
  *
@@ -111,30 +119,34 @@ static PyMethodDef CladsGraphMethods[] =
         clads_b_graph_size,
         METH_VARARGS,
         size__doc__},
-    {"insert_node",
-        clads_b_graph_insert_node,
+    {"add_node",
+        clads_b_graph_add_node,
         METH_VARARGS,
-        insert_node__doc__},
-    {"remove_node",
-        clads_b_graph_remove_node,
+        add_node__doc__},
+    {"add_edge",
+        clads_b_graph_add_edge,
         METH_VARARGS,
-        remove_node__doc__},
-    {"next_node",
-        clads_b_graph_next_node,
+        add_edge__doc__},
+    {"get_node_info",
+        clads_b_graph_get_node_info,
         METH_VARARGS,
-        next_node__doc__},
-    {"insert_edge",
-        clads_b_graph_insert_edge,
+        get_node_info__doc__},
+    {"get_edge_info",
+        clads_b_graph_get_edge_info,
         METH_VARARGS,
-        insert_edge__doc__},
-    {"remove_edge",
-        clads_b_graph_remove_edge,
+        get_edge_info__doc__},
+    {"get_node_id",
+        clads_b_graph_get_node_id,
         METH_VARARGS,
-        remove_edge__doc__},
-    {"next_edge",
-        clads_b_graph_next_edge,
+        get_node_id__doc__},
+    {"get_edge_id",
+        clads_b_graph_get_edge_id,
         METH_VARARGS,
-        next_edge__doc__},
+        get_edge_id__doc__},
+    {"get_edge_nodes",
+        clads_b_graph_get_edge_nodes,
+        METH_VARARGS,
+        get_edge_nodes__doc__},
     {NULL, NULL, 0, NULL}
 };
 
@@ -144,6 +156,6 @@ static PyMethodDef CladsGraphMethods[] =
 static char module__doc__[] = "CLADS graph module";
 
 PyMODINIT_FUNC
-initgraph(void);
+initclads_graph(void);
 
 #endif

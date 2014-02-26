@@ -1,6 +1,6 @@
 # Copyright (C) 2012 Joao Paulo de Souza Medeiros
 #
-# Author: Joao Paulo de Souza Medeiros <jpsm1985@gmail.com>
+# Author(s): Joao Paulo de Souza Medeiros <ignotus21@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,22 +20,26 @@
 """
 
 
-import list
+import clads_list
 
 
 class List(object):
     """
     """
-    def __init__(self):
+    def __init__(self, cobj=None):
         """
         """
-        self.__list = list.initialize()
+        if cobj == None:
+            self.__cobj = clads_list.initialize()
+        else:
+            self.__cobj = clads_list.initialize(cobj)
+
         self.set_compare_callback(self.__bind_compare_callback)
 
     def __len__(self):
         """
         """
-        return list.size(self.__list)
+        return clads_list.size(self.__cobj)
 
     def __iter__(self):
         """
@@ -45,32 +49,37 @@ class List(object):
     def next(self):
         """
         """
-        n = list.next(self.__list)
+        n = clads_list.next(self.__cobj)
 
         if n is None:
             raise StopIteration
 
         return n
 
+    def get_cobj(self):
+        """
+        """
+        return self.__cobj
+
     def insert(self, value):
         """
         """
-        return list.insert(self.__list, value)
+        return clads_list.insert(self.__cobj, value)
 
     def remove(self, value):
         """
         """
-        return list.remove(self.__list, value, 'F')
+        return clads_list.remove(self.__cobj, value, 'F')
 
     def removeall(self, value):
         """
         """
-        return list.remove(self.__list, value, 'T')
+        return clads_list.remove(self.__cobj, value, 'T')
 
     def set_compare_callback(self, f_compare):
         """
         """
-        list.set_compare_callback(self.__list, f_compare)
+        clads_list.set_compare_callback(self.__cobj, f_compare)
 
     @staticmethod
     def __bind_compare_callback(a, b):

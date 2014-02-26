@@ -1,7 +1,7 @@
 /**
  * Copyright (C) 2012 Joao Paulo de Souza Medeiros
  *
- * Author(s): Joao Paulo de Souza Medeiros <jpsm1985@gmail.com>
+ * Author(s): Joao Paulo de Souza Medeiros <ignotus21@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,6 +119,6 @@ static PyMethodDef CladsListMethods[] =
 static char module__doc__[] = "CLADS list module";
 
 PyMODINIT_FUNC
-initlist(void);
+initclads_list(void);
 
 #endif

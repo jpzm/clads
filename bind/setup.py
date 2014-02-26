@@ -1,6 +1,6 @@
 # Copyright (C) 2012 Joao Paulo de Souza Medeiros
 #
-# Author: Joao Paulo de Souza Medeiros <jpsm1985@gmail.com>
+# Author(s): Joao Paulo de Souza Medeiros <ignotus21@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,17 +20,19 @@
 from distutils.core import setup, Extension
 
 
-list_module = Extension('list',
+list_module = Extension('clads_list',
                         include_dirs = ['../'],
                         extra_objects = ['../code/list.o',
                                          '../code/clads.o'],
                         extra_compile_args = ['-Wall', '-ggdb'],
                         sources = ['list.c'])
 
-graph_module = Extension('graph',
+graph_module = Extension('clads_graph',
                          include_dirs = ['../'],
-                         extra_objects = ['../code/graph.o',
-                                          '../code/clads.o'],
+                         extra_objects = ['../code/list.o',
+                                          '../code/graph.o',
+                                          '../code/clads.o',
+                                          '../code/statistic.o'],
                          extra_compile_args = ['-Wall', '-ggdb'],
                          sources = ['graph.c'])
 
