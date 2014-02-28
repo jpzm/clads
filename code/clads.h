@@ -1,7 +1,7 @@
 /**
- * Copyright (C) 2011 Joao Paulo de Souza Medeiros
+ * Copyright (C) 2011-2014 Joao Paulo de Souza Medeiros
  *
- * Author(s): João Paulo de Souza Medeiros <ignotus21@gmail.com>
+ * Author(s): Joao Paulo de Souza Medeiros <ignotus21@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,8 +43,10 @@
 #define CLADS_SWAP(a,b)         {(a) += (b); (b) = (a) - (b); (a) -= (b);}
 #define CLADS_SCALE(v,a,b)      (2 * (((v) - (b)) / ((a) - (b))) - 1)
 #define CLADS_CAST(i,type)      ((type) (i))
-#define CLADS_ALLOC(s,type)     ((type *) malloc(sizeof(type) * s))
-#define CLADS_FREE(i)           (free((clads_addr_type) i))
+#define CLADS_ALLOC(s,type)     (type *) malloc(sizeof(type) * s); \
+                                clads_alloc_count++;
+#define CLADS_FREE(i)           free((clads_addr_type) i); \
+                                clads_alloc_count--;
 
 
 typedef void clads_void_type;
@@ -68,6 +70,10 @@ typedef enum {clads_less = -1,
               clads_equal = 0,
               clads_more = 1,
               clads_unknown = 2} clads_order_type;
+/**
+ * Global variables
+ */
+clads_size_type clads_alloc_count;
 
 
 /**

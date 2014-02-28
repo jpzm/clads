@@ -25,6 +25,11 @@ clads_void_type
 clads_initialize(clads_void_type)
 {
     /*
+     * Initialize the allocation counter.
+     */
+    clads_alloc_count = 0;
+
+    /*
      * Initialize random number seed.
      */
     FILE *fp = fopen("/dev/urandom", "r");
@@ -51,6 +56,9 @@ clads_initialize(clads_void_type)
 clads_void_type
 clads_finalize(clads_void_type)
 {
+#if CLADS_DEBUG
+    printf("N. [CLADS] Remaining allocations: " CLADS_UINT_STR ".\n", clads_alloc_count);
+#endif
 }
 
 clads_size_type
