@@ -73,5 +73,7 @@ int main(void)
 
     clads_tree_finalize(&t);
 
+    clads_finalize();
+
     return 0;
 }

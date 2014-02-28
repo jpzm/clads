@@ -85,5 +85,7 @@ int main(void)
 
     clads_hash_finalize(&h);
 
+    clads_finalize();
+
     return 0;
 }

@@ -76,5 +76,7 @@ int main(void)
     clads_list_finalize(&l);
     clads_list_finalize(c);
 
+    clads_finalize();
+
     return 0;
 }
