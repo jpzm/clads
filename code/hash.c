@@ -69,7 +69,7 @@ clads_hash_node_initialize(clads_hash_node_type *n)
 clads_void_type
 clads_hash_node_finalize(clads_hash_node_type *n)
 {
-    if (n != NULL)
+    if (n->info != NULL)
     {
         CLADS_FREE(n->info);
         n->info = NULL;
@@ -104,7 +104,10 @@ clads_hash_finalize(clads_hash_type *h)
     if (h != NULL)
     {
         for (i = 0; i < h->size; i++)
+        {
+            clads_list_finalize(h->table[i]);
             CLADS_FREE(h->table[i]);
+        }
 
         CLADS_FREE(h->table);
 

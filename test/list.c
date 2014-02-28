@@ -75,6 +75,7 @@ int main(void)
 
     clads_list_finalize(&l);
     clads_list_finalize(c);
+    CLADS_FREE(c);
 
     clads_finalize();
 

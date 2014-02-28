@@ -73,13 +73,13 @@ clads_list_node_finalize(clads_list_node_type *n,
     if (n != NULL)
     {
         if (do_free_info == clads_true && n->info != NULL)
-            CLADS_FREE((clads_addr_type) n->info);
+            CLADS_FREE(n->info);
 
         n->info = NULL;
         n->prev = NULL;
         n->next = NULL;
 
-        CLADS_FREE((clads_addr_type) n);
+        CLADS_FREE(n);
     }
 #if CLADS_DEBUG
     else
