@@ -247,5 +247,10 @@ clads_graph_node_clustering(clads_graph_type *g,
 clads_list_type *
 clads_graph_spanning_tree(clads_graph_type *g);
 
+/**
+ *
+ */
+clads_graph_type *
+clads_graph_from_tgf_file(clads_string_type filename);
 
 #endif

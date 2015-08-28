@@ -118,6 +118,8 @@ clads_graph_finalize(clads_graph_type *g)
         clads_list_finalize(g->l_edge);
         clads_list_finalize(g->l_node);
         clads_graph_clear_adjacency(g);
+        CLADS_FREE(g->l_node);
+        CLADS_FREE(g->l_edge);
     }
 #if CLADS_DEBUG
     else
@@ -455,7 +457,7 @@ clads_graph_node_type *
 clads_graph_get_node(clads_graph_type *g,
                      clads_id_type id)
 {
-    clads_list_node_type *l = g->l_edge->head;
+    clads_list_node_type *l = g->l_node->head;
     clads_graph_node_type *n;
 
     while (l != NULL)
@@ -475,7 +477,7 @@ clads_graph_node_type *
 clads_graph_get_node_by_info(clads_graph_type *g,
                              clads_addr_type info)
 {
-    clads_list_node_type *l = g->l_edge->head;
+    clads_list_node_type *l = g->l_node->head;
     clads_graph_node_type *n;
 
     while (l != NULL)
@@ -704,4 +706,88 @@ clads_graph_spanning_tree(clads_graph_type *g)
     }
 
     return r;
+}
+
+clads_graph_type *
+clads_graph_from_tgf_file(clads_string_type filename)
+{
+    clads_file_type handle = fopen(filename, "r");
+
+    if (handle != NULL)
+    {
+        clads_id_type id, id_o, id_d;
+        clads_addr_type *map = NULL;
+        clads_graph_node_type *n;
+        clads_graph_type *g = CLADS_ALLOC(1, clads_graph_type);
+
+        clads_graph_initialize(g);
+
+        clads_size_type length = 0;
+        clads_string_type line = NULL;
+        clads_string_type info = NULL;
+
+        clads_bool_type mode = clads_true; // True to read node lines.
+
+        while (getline(&line, &length, handle) != -1)
+        {
+            if (line[0] != '#')
+            {
+                if (mode == clads_true)
+                {
+                    /*
+                     * Read line with node description.
+                     */
+                    clads_graph_add_node(g, NULL);
+
+                    // TODO: read optional info and add it to node structure.
+                }
+                else
+                {
+                    /*
+                     * Read line with edge description.
+                     */
+                    sscanf(line, CLADS_UINT_STR " " CLADS_UINT_STR,
+                            &id_o, &id_d);
+
+                    clads_graph_add_edge(g, map[id_o], map[id_d], NULL);
+
+                    // TODO: read optional info and add it to edge structure.
+                }
+            }
+            else
+            {
+                mode = clads_false; // Switch to edge mode.
+
+                /*
+                 * Bulid node addess vector indexed by id
+                 */
+                if (g->n_node > 0)
+                {
+                    map = CLADS_ALLOC(g->n_node, clads_addr_type);
+
+                    clads_list_node_type *l = g->l_node->head;
+
+                    while (l != NULL)
+                    {
+                        n = (clads_graph_node_type *) l->info;
+                        map[n->id] = n;
+                        l = l->next;
+                    }
+                }
+            }
+
+            free(line); // Memory allocated by the `getline' function.
+            line = NULL;
+            length = 0;
+        }
+
+        if (map != NULL)
+            CLADS_FREE(map);
+
+        fclose(handle);
+
+        return g;
+    }
+
+    return NULL;
 }

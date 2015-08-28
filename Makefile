@@ -11,6 +11,11 @@ all:
 	cd test; ${CC} ${CFLAGS} tree.c -o tree \
 		../code/clads.o \
 		../code/tree.o -lm
+	cd test; ${CC} ${CFLAGS} tgf.c -o tgf \
+		../code/clads.o \
+		../code/list.o \
+		../code/statistic.o \
+		../code/graph.o -lm
 	cd test; ${CC} ${CFLAGS} hash.c -o hash \
 		../code/clads.o \
 		../code/list.o \
