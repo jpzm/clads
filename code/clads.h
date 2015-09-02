@@ -81,39 +81,39 @@ clads_size_type clads_alloc_count;
 /**
  *
  */
-inline clads_void_type
+clads_void_type
 clads_initialize(clads_void_type);
 
 /**
  *
  */
-inline clads_void_type
+clads_void_type
 clads_finalize(clads_void_type);
 
 /**
  *
  */
-inline clads_size_type
+clads_size_type
 clads_loop_index(clads_size_type i,
                  clads_size_type n);
 
 /**
  *
  */
-inline clads_void_type
+clads_void_type
 clads_shuffle(clads_int_type *vector,
               clads_size_type length);
 
 /**
  *
  */
-inline clads_real_type
+clads_real_type
 clads_nrand(clads_void_type);
 
 /**
  *
  */
-inline clads_real_type
+clads_real_type
 clads_rand(const clads_real_type min,
            const clads_real_type max);
 
@@ -127,20 +127,20 @@ clads_randint(const clads_int_type min,
 /**
  *
  */
-inline clads_uint_type
+clads_uint_type
 clads_factorial(const clads_uint_type v);
 
 /**
  *
  */
-inline clads_uint_type
+clads_uint_type
 clads_binomial(const clads_uint_type n,
                const clads_uint_type k);
 
 /**
  *
  */
-inline clads_uint_type
+clads_uint_type
 clads_nextpow2(clads_uint_type n);
 
 #endif

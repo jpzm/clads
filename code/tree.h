@@ -61,25 +61,25 @@ clads_tree_node_new(clads_void_type);
 /**
  * Initialize a given tree node
  */
-inline clads_void_type
+clads_void_type
 clads_tree_node_initialize(clads_tree_node_type *t);
 
 /**
  * Finalize a given tree node
  */
-inline clads_void_type
+clads_void_type
 clads_tree_node_finalize(clads_tree_node_type *t);
 
 /**
  * Initialize a given tree
  */
-inline clads_void_type
+clads_void_type
 clads_tree_initialize(clads_tree_type *t);
 
 /**
  * Finalize a given tree
  */
-inline clads_void_type
+clads_void_type
 clads_tree_finalize(clads_tree_type *t);
 
 /**
@@ -92,13 +92,13 @@ clads_tree_copy(const clads_tree_type *ta,
 /**
  * Initialize a given tree node
  */
-inline clads_void_type
+clads_void_type
 clads_tree_node_initialize(clads_tree_node_type *n);
 
 /**
  * Finalize a given tree node
  */
-inline clads_void_type
+clads_void_type
 clads_tree_node_finalize(clads_tree_node_type *n);
 
 /**

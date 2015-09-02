@@ -27,13 +27,13 @@
 /**
  *
  */
-inline clads_bool_type
+clads_bool_type
 clads_statistic_uniform_trial(clads_real_type p);
 
 /**
  *
  */
-inline clads_real_type
+clads_real_type
 clads_statistic_mean(clads_real_type *v,
                      clads_real_type *p,
                      clads_size_type n);
@@ -41,14 +41,14 @@ clads_statistic_mean(clads_real_type *v,
 /**
  *
  */
-inline clads_real_type
+clads_real_type
 clads_statistic_sample_mean(clads_real_type *v,
                             clads_size_type n);
 
 /**
  *
  */
-inline clads_real_type
+clads_real_type
 clads_statistic_variance(clads_real_type *v,
                          clads_real_type *p,
                          clads_size_type n);
@@ -56,7 +56,7 @@ clads_statistic_variance(clads_real_type *v,
 /**
  *
  */
-inline clads_real_type
+clads_real_type
 clads_statistic_sample_variance(clads_real_type *v,
                                 clads_size_type n);
 

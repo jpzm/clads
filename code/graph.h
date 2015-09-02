@@ -84,13 +84,13 @@ typedef struct clads_graph
 /**
  * Initialize an given graph
  */
-inline clads_void_type
+clads_void_type
 clads_graph_initialize(clads_graph_type *g);
 
 /**
  * Finalize an given graph
  */
-inline clads_void_type
+clads_void_type
 clads_graph_finalize(clads_graph_type *g);
 
 /**
