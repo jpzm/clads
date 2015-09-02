@@ -20,7 +20,7 @@ all:
 		../code/clads.o \
 		../code/list.o \
 		../code/hash.o -lm
-	cd bind; python setup.py build_ext -f -b clads
+#	cd bind; python setup.py build_ext -f -b clads
 
 clean:
 	cd code; rm -rf *.o
