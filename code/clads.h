@@ -59,6 +59,7 @@ typedef long long int clads_int_type;
 typedef unsigned long long int clads_uint_type;
 typedef clads_uint_type clads_id_type;
 typedef clads_uint_type clads_size_type;
+typedef size_t clads_size_t_type;
 typedef char * clads_string_type;
 typedef FILE * clads_file_type;
 

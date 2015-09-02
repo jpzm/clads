@@ -715,16 +715,14 @@ clads_graph_from_tgf_file(clads_string_type filename)
 
     if (handle != NULL)
     {
-        clads_id_type id, id_o, id_d;
+        clads_id_type id_o, id_d;
         clads_addr_type *map = NULL;
-        clads_graph_node_type *n;
-        clads_graph_type *g = CLADS_ALLOC(1, clads_graph_type);
-
-        clads_graph_initialize(g);
-
-        clads_size_type length = 0;
+        clads_size_t_type length = 0;
         clads_string_type line = NULL;
-        clads_string_type info = NULL;
+        clads_graph_node_type *n;
+
+        clads_graph_type *g = CLADS_ALLOC(1, clads_graph_type);
+        clads_graph_initialize(g);
 
         clads_bool_type mode = clads_true; // True to read node lines.
 
