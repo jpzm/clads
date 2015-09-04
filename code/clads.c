@@ -57,7 +57,8 @@ clads_void_type
 clads_finalize(clads_void_type)
 {
 #if CLADS_DEBUG
-    printf("N. [CLADS] Remaining allocations: " CLADS_UINT_STR ".\n", clads_alloc_count);
+    printf("N. [CLADS] Remaining allocations: " CLADS_UINT_STR ".\n",
+            clads_alloc_count);
 #endif
 }
 

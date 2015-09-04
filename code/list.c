@@ -73,7 +73,9 @@ clads_list_node_finalize(clads_list_node_type *n,
     if (n != NULL)
     {
         if (do_free_info == clads_true && n->info != NULL)
+        {
             CLADS_FREE(n->info);
+        }
 
         n->info = NULL;
         n->prev = NULL;
@@ -260,6 +262,8 @@ clads_list_pop(clads_list_type *l)
         
         if (l->head != NULL)
             l->head->prev = NULL;
+        else
+            l->tail = NULL;
     }
 
     return n;
