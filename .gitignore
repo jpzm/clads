@@ -5,3 +5,4 @@
 test/list
 test/hash
 test/tree
+test/graph*

@@ -26,6 +26,10 @@
 #include "statistic.h"
 
 
+typedef enum {clads_graph_search_bfs = 0,
+              clads_graph_search_dfs = 1} clads_graph_search_type;
+
+
 /**
  *
  */
@@ -250,7 +254,16 @@ clads_graph_spanning_tree(clads_graph_type *g);
 /**
  *
  */
+clads_addr_type *
+clads_graph_search(clads_graph_type *g,
+                   clads_graph_node_type *n,
+                   clads_graph_search_type t);
+
+/**
+ *
+ */
 clads_graph_type *
-clads_graph_from_tgf_file(clads_string_type filename);
+clads_graph_from_tgf_file(clads_string_type filename,
+                          clads_bool_type is_directed);
 
 #endif

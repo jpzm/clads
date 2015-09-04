@@ -21,48 +21,64 @@
 #include "../code/clads.h"
 #include "../code/graph.h"
 
+void
+graph_print_path(clads_addr_type *r, clads_graph_node_type *n)
+{
+    if (n != NULL)
+    {
+        graph_print_path(r, r[n->id]);
+        printf(" " CLADS_UINT_STR, n->id);
+    }
+}
 
 void
-graph_print(clads_graph_type *g)
+graph_print_paths(clads_graph_type *g, clads_addr_type *r)
 {
+    clads_size_type i;
     clads_list_node_type *l;
     clads_graph_node_type *n;
-    clads_graph_edge_type *e;
 
     l = g->l_node->head;
 
-    printf("N = { ");
+    printf("answer: ");
+    for (i = 0; i < g->n_node; i++)
+        printf("[" CLADS_UINT_STR "]-%p ", i, r[i]);
+    printf("\n");
+
     while (l != NULL)
     {
         n = (clads_graph_node_type *) l->info;
-        printf(CLADS_UINT_STR " ", n->id);
+
+        graph_print_path(r, n);
+        printf(" (%p)\n", n);
+
         l = l->next;
     }
-    printf("}\n");
-
-    l = g->l_edge->head;
-
-    printf("E = { ");
-    while (l != NULL)
-    {
-        e = (clads_graph_edge_type *) l->info;
-        printf("(" CLADS_UINT_STR " " CLADS_UINT_STR ") ",
-                e->na->id,
-                e->nb->id);
-        l = l->next;
-    }
-    printf("}\n");
 }
 
 int main(int argc, char **argv)
 {
+    clads_addr_type *r;
     clads_graph_type *g;
+    clads_graph_node_type *n;
 
     clads_initialize();
 
     g = clads_graph_from_tgf_file(argv[1], clads_false);
 
-    graph_print(g);
+    n = CLADS_CAST(g->l_node->tail->info, clads_graph_node_type *);
+
+    r = clads_graph_search(g, n, clads_graph_search_dfs);
+    printf("DFS\n");
+    graph_print_paths(g, r);
+    CLADS_FREE(r);
+    printf("\n");
+
+    r = clads_graph_search(g, n, clads_graph_search_bfs);
+    printf("BFS\n");
+    graph_print_paths(g, r);
+    CLADS_FREE(r);
+    printf("\n");
 
     clads_graph_finalize(g);
     CLADS_FREE(g);
